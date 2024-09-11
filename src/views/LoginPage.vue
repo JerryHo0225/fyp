@@ -23,7 +23,7 @@ async function adminLogin() {
 
                                 <div class="mb-md-5 mt-md-1 pb-5">
 
-                                    <h2 class="fw-bold mb-3 text-uppercase text-start text-dark">Login in to HKBU Leave
+                                    <h2 class="fw-bold mb-3 text-uppercase text-start text-dark">Login in to Leave
                                         Application</h2>
 
                                     <hr class="my-3 text-dark">

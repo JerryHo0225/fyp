@@ -25,19 +25,23 @@ const notification = ref({
 
 // The nav-link items active status handling
 const active = ref({
-    main: "nav-link",
-    apply: "nav-link",
-    record: "nav-link",
-    endorsement: "nav-link",
-    approvaled: "nav-link",
-    reject: "nav-link",
-    need_info: "nav-link",
-    admin: "nav-link",
-    admin_management: "nav-link",
-    Permissions_assignment: "nav-link",
-    approving: "nav-link",
-    dashboard: "nav-link"
+  
 })
+
+// const active = ref({
+//     main: "nav-link",
+//     apply: "nav-link",
+//     record: "nav-link",
+//     endorsement: "nav-link",
+//     approvaled: "nav-link",
+//     reject: "nav-link",
+//     need_info: "nav-link",
+//     admin: "nav-link",
+//     admin_management: "nav-link",
+//     Permissions_assignment: "nav-link",
+//     approving: "nav-link",
+//     dashboard: "nav-link"
+// })
 
 // The nav-link items active status handling function
 const pageActice = function () {
@@ -250,61 +254,9 @@ async function get_number_of_recorde_awaiting_f1_f4(page = 1) {
         <div class="container-fluid">
 
             <a class="navbar-brand" v-if="userRole != 'admin'" href="/main">BureauLeave</a>
-            <a class="navbar-brand" v-if="userRole == 'admin'" href="/dashboard">BureauLeave</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.main href="/main">Main</a></li>
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.apply href="/apply">Apply</a></li>
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.record href="/record">Record</a>
-                    </li>
-
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.endorsement
-                            href="/record/endorsement">Endorsement
-                            <span v-if="notification.endorsment > 0" class="badge text-bg-info">{{
-                notification.endorsment }}</span></a>
-                    </li>
-                    <li v-if="userPosition != null" class="nav-item">
-                        <a :class=active.approvaled href="/record/approved">Approved
-                            <span v-if="notification.approved > 0" class="badge text-bg-success">{{
-                notification.approved }}</span></a>
-                    </li>
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.reject
-                            href="/record/rejected">Reject
-                            <span v-if="notification.rejected > 0" class="badge text-bg-danger">{{ notification.rejected
-                                }}</span></a>
-                    </li>
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.need_info
-                            href="/record/needinfo">Need Info <span v-if="notification.needinfo > 0"
-                                class="badge text-bg-warning">{{ notification.needinfo }}</span></a>
-                    </li>
-
-                    <!-- 
-                    <li v-if="userPosition != null" class="nav-item"><a :class=active.Permissions_assignment
-                            href="/Permissions_assignment">Permissions</a>
-                    </li> -->
-                    <li v-if="userRole != 'admin'&&(  userPosition == 'Dean' || userPosition == 'head'|| userPosition == 'team head'  || userPosition == 'manager'  || userPosition == 'Vice-President' || userPosition == 'President'|| userPosition == 'Provost')"        class="nav-item">
-                        <a :class=active.approving href="/approving">Approving
-                            <span class="badge text-bg-primary">{{ unread_number }}</span></a>
-                    </li>
-
-                    <li v-if="userRole == 'admin'" class="nav-item"><a :class=active.dashboard
-                            href="/dashboard">Dashboard</a></li>
-
-                    <li v-if="userRole == 'admin'" class="nav-item"><a :class=active.admin href="/admin/portal">Admin
-                            Protal</a></li>
-                    <li v-if="userRole == 'admin'" class="nav-item"><a :class=active.admin_management
-                            href="/admin/manage">Account Management</a></li>
-                </ul>
-
+      
                 <button type="button" class="btn btn-outline-danger" @click="logout">Sign Out</button>
             </div>
-        </div>
+
     </nav>
 </template>

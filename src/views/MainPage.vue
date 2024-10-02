@@ -18,9 +18,11 @@
         <button @click="loadMore">Load More</button>
 
         <!-- Line Chart -->
-        <StockChart></StockChart>
+       
       </div>
       <div v-else>
+        <MoreStockChart></MoreStockChart>
+
         <p>Loading data...</p>
       </div>
     </div>
@@ -33,7 +35,9 @@
 
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import MoreStockChart from '@/components/MoreStockChart.vue';
 import StockChart from '@/components/StockChart.vue';
+
 
 const stockData = ref([])
 const lineChartRef = ref(null) // Reference for the chart
@@ -41,38 +45,38 @@ let chartInstance = null // Store chart instance
 let skip = ref(0)
 const limit = 100 // Number of records to fetch per request
 
-const fetchData = async () => {
-  try {
-    const response = await fetch(`/api/stocks`)
-    const newData = await response.json()
-    console.log('API Response:', newData) // Log the response
+// const fetchData = async () => {
+//   try {
+//     const response = await fetch(`/api/stocks`)
+//     const newData = await response.json()
+//     console.log('API Response:', newData) // Log the response
 
-    // Check if newData is an array or extract the data if it's an object
-    if (Array.isArray(newData)) {
-      stockData.value.push(...newData)
-    } else if (newData.data && Array.isArray(newData.data)) {
-      stockData.value.push(...newData.data)
-    } else {
-      console.error('Fetched data is not in expected format:', newData)
-      return // Exit if data format is not as expected
-    }
+//     // Check if newData is an array or extract the data if it's an object
+//     if (Array.isArray(newData)) {
+//       stockData.value.push(...newData)
+//     } else if (newData.data && Array.isArray(newData.data)) {
+//       stockData.value.push(...newData.data)
+//     } else {
+//       console.error('Fetched data is not in expected format:', newData)
+//       return // Exit if data format is not as expected
+//     }
 
-    skip.value += limit // Update skip for next request
-    await nextTick(); // Ensure DOM updates before updating the chart
-    } catch (error) {
-    console.log('Error fetching data:', error)
-  }
-}
+//     skip.value += limit // Update skip for next request
+//     await nextTick(); // Ensure DOM updates before updating the chart
+//     } catch (error) {
+//     console.log('Error fetching data:', error)
+//   }
+// }
 
-const loadMore = () => {
-  fetchData()
-}
+// const loadMore = () => {
+//   fetchData()
+// }
 
-// Function to update the chart
+// // Function to update the chart
 
-onMounted(() => {
-  fetchData()
-})
+// onMounted(() => {
+//   fetchData()
+// })
 
 </script>
 

@@ -52,7 +52,7 @@ interface StockData {
 }
 
 export default {
-  name: 'StockChart',
+  name: 'MoreStockChart',
   components: {
     Bar,
     Line
@@ -71,6 +71,13 @@ export default {
         },
         {
           label: 'Volume',
+          data: [],
+          backgroundColor: 'rgba(153, 102, 255, 0.6)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Open',
           data: [],
           backgroundColor: 'rgba(153, 102, 255, 0.6)',
           borderColor: 'rgba(153, 102, 255, 1)',
@@ -115,7 +122,12 @@ export default {
     const fetchData = async () => {
       try {
         console.log('Fetching data...')
-        const response = await fetch(`/api/stocks`)
+        var stockSyboml = "AAPL"
+        
+         const response = await fetch(`/api/stocks/${stockSyboml}`)
+        //const response = await fetch(`/api/stocks`)
+        
+
         const newData = await response.json()
         console.log('API Response:', newData)
 
@@ -151,6 +163,8 @@ export default {
       })
       chartData.value.datasets[0].data = stockData.value.map(item => item.Close)
       chartData.value.datasets[1].data = stockData.value.map(item => item.Volume)
+      chartData.value.datasets[2].data = stockData.value.map(item => item.Open)
+      
 
       console.log('Updated chart data:', chartData.value)
     }

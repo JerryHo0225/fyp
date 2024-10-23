@@ -259,14 +259,14 @@ const router = createRouter({
         title: 'Admin Detail'
       }
     },
-    {
-      path: '/PDF_viwer_',
-      name: 'PDF_viwer_',
-      component: () => import('../views/pdf_viwer.vue'),
-      meta: {
-        title: 'PDF_viwer_'
-      }
-    },
+    // {
+    //   path: '/PDF_viwer_',
+    //   name: 'PDF_viwer_',
+    //   component: () => import('../views/pdf_viwer.vue'),
+    //   meta: {
+    //     title: 'PDF_viwer_'
+    //   }
+    // },
     {
       path: '/dashboard',
       name: 'dashboard',

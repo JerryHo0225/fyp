@@ -7,10 +7,10 @@
 </template>
 
 <style scoped>
-/* The background color control of the whole website */
+/* The background color control of the whole website background-color: #6a94e2; */
 html, body, main {
   min-height: 100vh;
-  background-color: #6a94e2;
+  
 }
 </style>
 

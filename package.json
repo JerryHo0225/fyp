@@ -19,6 +19,7 @@
     "@mdi/font": "^7.4.47",
     "@oruga-ui/oruga-next": "^0.8.7",
     "@oruga-ui/theme-bootstrap": "^0.5.4",
+    "@supabase/supabase-js": "^2.45.4",
     "apexcharts": "^3.48.0",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.3",

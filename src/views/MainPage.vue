@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <main>
     <div class="container">
       <div style="padding-top: 3rem"></div>
@@ -17,11 +17,11 @@
         </ul>
         <button @click="loadMore">Load More</button>
 
-        <!-- Line Chart -->
+      
        
-      </div>
+      </div> 
       <div v-else>
-        <MoreStockChart></MoreStockChart>
+        <MoreStockChart initialSymbol="AAPL"></MoreStockChart>
 
         <p>Loading data...</p>
       </div>
@@ -78,7 +78,7 @@ const limit = 100 // Number of records to fetch per request
 //   fetchData()
 // })
 
-</script>
+</script> -->
 
 <style>
 .container {
@@ -90,3 +90,33 @@ canvas {
   height: 400px; /* Ensure the height is set */
 }
 </style>
+
+
+<script setup>
+import { onMounted, ref } from 'vue'
+import Account from '@/components/Account.vue'
+import Auth from '@/components/Auth.vue'
+import { supabase } from '@/supabase'
+import NavBarView from '@/components/NavBarView.vue';
+
+const session = ref()
+
+onMounted(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    session.value = data.session
+  })
+
+  supabase.auth.onAuthStateChange((_, _session) => {
+    session.value = _session
+  })
+})
+</script>
+
+<template>
+  <NavBarView/>
+  <div class="container" style="padding: 50px 0 100px 0">
+    
+    <Account v-if="session" :session="session" />
+    <Auth v-else />
+  </div>
+</template>

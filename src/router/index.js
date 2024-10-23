@@ -274,6 +274,29 @@ const router = createRouter({
       meta: {
         title: 'Dashboard'
       }
+    },{
+      path: '/viewchart',
+      name: 'viewchart',
+      component: () => import('@/views/ViewChart.vue'),
+      meta: {
+        title: 'Viewchart'
+      }
+    }
+    ,{
+      path: '/viewchart/:initialSymbol',
+      name: 'viewchart',
+      component: () => import('@/views/ViewChart.vue'),
+      meta: {
+        title: 'Viewchart'
+      }
+    }
+    ,{
+      path: '/search',
+      name: 'search',
+      component: () => import('@/views/SearchStock.vue'),
+      meta: {
+        title: 'Search'
+      }
     },
   ]
 })

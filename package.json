@@ -24,6 +24,7 @@
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.4",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "express-fileupload": "^1.4.3",
     "file-saver": "^2.0.5",
@@ -39,6 +40,7 @@
     "vue3-apexcharts": "^1.5.2",
     "vue3-pdf-app": "^1.0.3",
     "vue3-slot-calendar": "^3.0.3",
+    "vuetify": "^3.7.3",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

@@ -20,19 +20,19 @@ const router = createRouter({
       }
     },
     {
-      path: '/main/record/rejected',
-      name: 'main-page-record-rejected',
-      component: () => import('../views/MainPage.vue'),
+      path: '/viewpridect',
+      name: 'viewpridect',
+      component: () => import('../views/ViewPredictChart.vue'),
       meta: {
-        title: 'Home'
+        title: 'viewpridect'
       }
     },
     {
-      path: '/main/record/needinfo',
-      name: 'main-page-record-needinfo',
-      component: () => import('../views/MainPage.vue'),
+      path: '/selectstock',
+      name: 'selectstock',
+      component: () => import('../views/StockCard.vue'),
       meta: {
-        title: 'Home'
+        title: 'selectstock'
       }
     },
     {

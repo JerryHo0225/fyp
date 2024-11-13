@@ -40,15 +40,7 @@ ChartJS.register(
 )
 
 interface StockData {
-  _id: string;
-  Date: string;
-  Open: number;
-  High: number;
-  Low: number;
-  Close: number;
-  'Adj Close': number;
-  Volume: number;
-  Symbol: string;
+  predictions: number[];
 }
 
 export default {
@@ -63,17 +55,10 @@ export default {
       labels: [],
       datasets: [
         {
-          label: 'Close Price',
+          label: 'Predictions',
           data: [],
           backgroundColor: 'rgba(75, 192, 192, 0.6)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Volume',
-          data: [],
-          backgroundColor: 'rgba(153, 102, 255, 0.6)',
-          borderColor: 'rgba(153, 102, 255, 1)',
           borderWidth: 1
         }
       ]
@@ -83,28 +68,13 @@ export default {
       scales: {
         y: {
           beginAtZero: true,
-          position: 'left' as const,
           title: {
             display: true,
-            text: 'Close Price'
-          }
-        },
-        y1: {
-          beginAtZero: true,
-          position: 'right' as const,
-          title: {
-            display: true,
-            text: 'Volume'
-          },
-          grid: {
-            drawOnChartArea: false
+            text: 'Predicted Values'
           }
         }
       }
     })
-    const stockData = ref<StockData[]>([])
-    const skip = ref(0)
-    const limit = 10 // Adjust as needed
 
     const currentChartComponent = computed(() => isBarChart.value ? Bar : Line)
 
@@ -115,42 +85,30 @@ export default {
     const fetchData = async () => {
       try {
         console.log('Fetching data...')
-        const response = await fetch(`/api/stocks`)
+        const response = await fetch(`/api/predict`)
         const newData = await response.json()
         console.log('API Response:', newData)
 
-        if (Array.isArray(newData)) {
-          stockData.value = newData
-        } else if (newData.data && Array.isArray(newData.data)) {
-          stockData.value = newData.data
-        } else {
+        if (!Array.isArray(newData.predictions)) {
           console.error('Fetched data is not in expected format:', newData)
           return
         }
 
-        console.log('Stock data after fetch:', stockData.value)
-
-        skip.value += limit
-        await nextTick()
-        updateChartData()
+        updateChartData(newData.predictions)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
-    const updateChartData = () => {
+    const updateChartData = (predictions: number[]) => {
       console.log('Updating chart data...')
-      if (stockData.value.length === 0) {
-        console.warn('No stock data available to update chart')
+      if (predictions.length === 0) {
+        console.warn('No predictions available to update chart')
         return
       }
 
-      chartData.value.labels = stockData.value.map(item => {
-        const date = new Date(item.Date)
-        return date.toLocaleDateString()
-      })
-      chartData.value.datasets[0].data = stockData.value.map(item => item.Close)
-      chartData.value.datasets[1].data = stockData.value.map(item => item.Volume)
+      chartData.value.labels = predictions.map((_, index) => `Prediction ${index + 1}`)
+      chartData.value.datasets[0].data = predictions
 
       console.log('Updated chart data:', chartData.value)
     }

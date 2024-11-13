@@ -19,7 +19,7 @@
         <button @click="loadMore">Load More</button>
       </div>
       <div v-else>
-        <MoreStockChart :initialSymbol="initialSymbol"></MoreStockChart>
+       <StockChart/>
       </div>
     </div>
   </main>
@@ -27,7 +27,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import MoreStockChart from '@/components/MoreStockChart.vue';
+import StockChart from '@/components/StockChart.vue';
 import NavBarView from '@/components/NavBarView.vue';
 import { useRoute } from 'vue-router'
 

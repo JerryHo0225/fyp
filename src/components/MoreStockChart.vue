@@ -79,7 +79,6 @@ ChartJS.register(
 )
 
 interface StockData {
-  _id: string
   Date: string
   Open: number
   High: number
@@ -87,7 +86,6 @@ interface StockData {
   Close: number
   'Adj Close': number
   Volume: number
-  Symbol: string
 }
 
 interface Dataset {
@@ -250,8 +248,6 @@ export default {
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
       )
 
-
-
       //no problem here
       const lastDate = new Date(sortedData[sortedData.length - 1].date)
       let startDate = new Date(lastDate)
@@ -271,7 +267,6 @@ export default {
         case '1M':
           startDate.setMonth(lastDate.getMonth() - 1)
 
-         
           break
 
         case '3M':

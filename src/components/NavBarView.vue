@@ -14,6 +14,8 @@ const active = ref({
   main: "nav-link",
   predict: "nav-link",
   selectstock: "nav-link",
+  selectrating: "nav-link",
+  forecast: "nav-link",
   // endorsement: "nav-link",
   // approvaled: "nav-link",
   // reject: "nav-link",
@@ -33,6 +35,10 @@ if (route.path == '/') {
     active.value.predict = 'nav-link active'
   } else if (route.path == '/selectstock') {
     active.value.selectstock = 'nav-link active'
+  }else if (route.path == '/selectrating') {
+    active.value.selectrating = 'nav-link active'
+  } else if (route.path == '/forecast') {
+    active.value.forecast = 'nav-link active'
   }
   
 }
@@ -63,6 +69,8 @@ onMounted(() => {
             <a :class="active.viewpridect" href="/viewpridect">viewpridect</a>
  
             <a :class="active.selectstock" href="/selectstock">selectstock</a>
+            <a :class="active.selectrating" href="/selectrating">selectrating</a>
+            <a :class="active.forecast" href="/forecast">forecast</a>
         </ul>
         <button type="button" class="btn btn-outline-danger" @click="logout">Sign Out</button>
       </div>

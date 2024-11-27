@@ -1,10 +1,51 @@
 <script setup>
-import CalendarView from '../components/CalendarView.vue'
+import { ref, onMounted } from 'vue'
 import NavBarView from '../components/NavBarView.vue'
 
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
+const stockProfiles = ref([])
+const tickers = ['MMM', 'AAPL', 'MSFT', 'ABT', 'AMZN', 'EBAY']
+const isLoading = ref(true)
+const error = ref(null)
+const expanded = ref({})
+
+const fetchProfileData = async (ticker) => {
+  try {
+    const response = await fetch(`/api/profile/${ticker}`)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const profileData = await response.json()
+    return profileData[0]
+  } catch (err) {
+    console.error('Error fetching profile data:', err)
+    return null
+  }
+}
+
+const fetchAllProfiles = async () => {
+  try {
+    const profiles = await Promise.all(tickers.map((ticker) => fetchProfileData(ticker)))
+    stockProfiles.value = profiles.filter((profile) => profile !== null)
+    profiles.forEach((profile) => {
+      if (profile) {
+        expanded.value[profile.ticker] = false
+      }
+    })
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'An error occurred'
+    console.error('Error fetching all profiles:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const toggleExpand = (ticker) => {
+  expanded.value[ticker] = !expanded.value[ticker]
+}
+
+onMounted(() => {
+  fetchAllProfiles()
+})
 </script>
 
 <template>
@@ -14,83 +55,38 @@ import { jwtDecode } from 'jwt-decode'
     <div class="container">
       <v-container>
         <v-row>
-          <!-- Card 1 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>3M</v-card-title>
-              <v-card-text>
-               
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="primary"  href="http://localhost:5173/viewchart/MMM">View the chart of 3M</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-
-          <!-- Card 2 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>Apple</v-card-title>
-              <v-card-text>
-              
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="secondary" href="http://localhost:5173/viewchart/AAPL">View the chart of Apple</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-
-          <!-- Card 3 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>Microsoft</v-card-title>
-              <v-card-text>
-                
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="success"  href="http://localhost:5173/viewchart/MSTF">View the chart of Microsoft</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-
-          <!-- Card 4 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>Abbott</v-card-title>
-              <v-card-text>
-                
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="info" href="http://localhost:5173/viewchart/ABT">View the chart of Abbott</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-
-          <!-- Card 5 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>Amazon</v-card-title>
-              <v-card-text>
-                
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="warning" href="http://localhost:5173/viewchart/AMZN">View the chart of Amazon</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-
-          <!-- Card 6 -->
-          <v-col cols="12" sm="6" md="4">
-            <v-card class="mx-auto" max-width="400">
-              <v-card-title>Ebay</v-card-title>
-              <v-card-text>
-                
-              </v-card-text>
-              <v-card-actions>
-                <v-btn color="error" href="http://localhost:5173/viewchart/EBAY">View the chart of Ebay</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
+          <template v-if="isLoading">
+            <v-col cols="12">
+              <v-alert type="info">Loading data...</v-alert>
+            </v-col>
+          </template>
+          <template v-else-if="error">
+            <v-col cols="12">
+              <v-alert type="error">{{ error }}</v-alert>
+            </v-col>
+          </template>
+          <template v-else>
+            <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
+              <v-card class="mx-auto" max-width="400">
+                <v-card-title>{{ profile.companyName }}</v-card-title>
+                <v-card-subtitle>Description</v-card-subtitle>
+                <v-card-text>
+                  {{ profile.website }}
+                </v-card-text>
+                <v-card-actions>
+                  <!-- <v-btn @click="toggleExpand(profile.ticker)">
+                    {{ expanded[profile.ticker] ? 'Show Less' : 'Show More' }}
+                  </v-btn> -->
+                  <v-btn
+                    :color="profile.color"
+                    :href="`http://localhost:5173/viewchart/${profile.ticker}`"
+                  >
+                    View chart of {{ profile.companyName }}
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </template>
         </v-row>
       </v-container>
     </div>

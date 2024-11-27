@@ -39,10 +39,6 @@ ChartJS.register(
   Legend
 )
 
-interface StockData {
-  predictions: number[];
-}
-
 export default {
   name: 'StockChart',
   components: {
@@ -57,14 +53,14 @@ export default {
         {
           label: 'Training',
           data: [],
-          backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(54, 162, 235, 0.6)', // New color
+          borderColor: 'rgba(54, 162, 235, 1)', // New color
           borderWidth: 1
         },{
           label: 'Predictions',
           data: [],
-          backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(255, 99, 132, 0.6)', // New color
+          borderColor: 'rgba(255, 99, 132, 1)', // New color
           borderWidth: 1
         }
       ]

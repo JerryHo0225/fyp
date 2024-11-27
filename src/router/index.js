@@ -34,13 +34,21 @@ const router = createRouter({
       meta: {
         title: 'selectstock'
       }
+    },    
+    {
+      path: '/selectrating',
+      name: 'selectrating',
+      component: () => import('../views/StockRating.vue'),
+      meta: {
+        title: 'selectrating'
+      }
     },
     {
-      path: '/new',
-      name: 'newuser-page',
-      component: () => import('../views/NewUser.vue'),
+      path: '/forecast',
+      name: 'forecast',
+      component: () => import('../views/ForecastChart.vue'),
       meta: {
-        title: 'New User'
+        title: 'forecast'
       }
     },
     {

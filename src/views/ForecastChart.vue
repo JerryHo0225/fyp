@@ -12,12 +12,14 @@
       <div v-else-if="error">{{ error }}</div>
     </div>
   </div>
+  <Footer></Footer>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import NavBarView from '@/components/NavBarView.vue';
+import {NavBarView} from '@/components/NavBarView.vue';
+
 
 export default {
   name: 'ForecastChart',
@@ -129,6 +131,10 @@ export default {
     };
   },
 };
+</script>
+
+<script setup>
+import Footer from '@/components/Footer.vue'
 </script>
 
 <style scoped>

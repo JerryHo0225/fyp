@@ -26,6 +26,8 @@
         <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
       </div>
     </div>
+
+    <Footer></Footer>
   </main>
 </template>
 
@@ -34,6 +36,7 @@ import { ref, onMounted, nextTick } from 'vue';
 import PredictStockChart from '@/components/PredictStockChart.vue';
 import NavBarView from '@/components/NavBarView.vue';
 import { useRoute } from 'vue-router'
+import Footer from '@/components/Footer.vue'
 
 const stockData = ref([]);
 const route = useRoute()

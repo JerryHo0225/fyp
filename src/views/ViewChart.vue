@@ -23,6 +23,7 @@
       </div>
     </div>
   </main>
+  <Footer></Footer>
 </template>
 
 <script setup>
@@ -30,6 +31,8 @@ import { ref, onMounted, nextTick } from 'vue';
 import MoreStockChart from '@/components/MoreStockChart.vue';
 import NavBarView from '@/components/NavBarView.vue';
 import { useRoute } from 'vue-router'
+import Footer from '@/components/Footer.vue'
+
 
 const stockData = ref([]);
 const route = useRoute()

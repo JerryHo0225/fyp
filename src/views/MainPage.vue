@@ -98,6 +98,7 @@ import Account from '@/components/Account.vue'
 import Auth from '@/components/Auth.vue'
 import { supabase } from '@/supabase'
 import NavBarView from '@/components/NavBarView.vue';
+import Footer from '@/components/Footer.vue';
 
 const session = ref()
 
@@ -118,5 +119,7 @@ onMounted(() => {
     
     <Account v-if="session" :session="session" />
     <Auth v-else />
+
   </div>
+  <Footer></Footer>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import NavBarView from '../components/NavBarView.vue';
+import Footer from '@/components/Footer.vue'
 
 const stockProfiles = ref([]);
 const tickers = ['MMM', 'AAPL', 'MSFT', 'ABT', 'AMZN', 'EBAY'];
@@ -68,7 +69,7 @@ onMounted(() => {
           <template v-else>
             <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
               <v-card class="mx-auto" max-width="400">
-                <v-card-title>{{ profile.companyName }}</v-card-title>
+                <v-card-title>{{ profile.symbol }}</v-card-title>
                 <v-card-subtitle>Ratings</v-card-subtitle>
                 <v-card-text>
                   <v-simple-table>
@@ -110,11 +111,7 @@ onMounted(() => {
                     </tbody>
                   </v-simple-table>
                 </v-card-text>
-                <v-card-actions>
-                  <v-btn :color="profile.color" :href="`http://localhost:5173/viewchart/${profile.ticker}`">
-                    View chart of {{ profile.companyName }}
-                  </v-btn>
-                </v-card-actions>
+                
               </v-card>
             </v-col>
           </template>
@@ -122,6 +119,7 @@ onMounted(() => {
       </v-container>
     </div>
   </main>
+  <Footer></Footer>
 </template>
 
 <style scoped>

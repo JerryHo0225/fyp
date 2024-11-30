@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import NavBarView from '../components/NavBarView.vue'
+import Footer from '@/components/Footer.vue'
 
 const stockProfiles = ref([])
 const tickers = ['MMM', 'AAPL', 'MSFT', 'ABT', 'AMZN', 'EBAY']
@@ -79,7 +80,7 @@ onMounted(() => {
                   </v-btn> -->
                   <v-btn
                     :color="profile.color"
-                    :href="`http://localhost:5173/viewchart/${profile.ticker}`"
+                    :href="`http://localhost:5173/viewchart/${profile.symbol}`"
                   >
                     View chart of {{ profile.companyName }}
                   </v-btn>
@@ -91,6 +92,7 @@ onMounted(() => {
       </v-container>
     </div>
   </main>
+  <Footer></Footer>
 </template>
 
 <style scoped>

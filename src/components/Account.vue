@@ -1,27 +1,82 @@
+<template>
+  <v-container class="fill-height">
+    <v-row justify="center" align="center">
+      <v-col cols="12" sm="8" md="6">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">Account Settings</span>
+          </v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="updateProfile">
+              <v-text-field
+                label="Email"
+                :value="session.user.email"
+                prepend-icon="mdi-email"
+              ></v-text-field>
+              <v-text-field
+                label="Name"
+                v-model="username"
+                outlined
+                prepend-icon="mdi-account"
+                :rules="[v => !!v || 'Name is required']"
+              ></v-text-field>
+              <v-text-field
+                label="Website"
+                v-model="website"
+                outlined
+                prepend-icon="mdi-web"
+                :rules="[v => /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/([\w/_-]+)?)*$/.test(v) || 'Enter a valid URL']"
+              ></v-text-field>
+              <v-btn
+                type="submit"
+                color="primary"
+                :loading="loading"
+                block
+                class="mt-4"
+              >
+                Update
+              </v-btn>
+              <v-btn
+                color="secondary"
+                @click="signOut"
+                :disabled="loading"
+                block
+                class="mt-2"
+              >
+                Sign Out
+              </v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
 <script setup>
 import { supabase } from '../supabase'
 import { onMounted, ref, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps(['session'])
 const { session } = toRefs(props)
+const router = useRouter()
 
-const loading = ref(true)
+const loading = ref(false)
 const username = ref('')
 const website = ref('')
 const avatar_url = ref('')
 
-onMounted(() => {
-  getProfile()
-})
+onMounted(getProfile)
 
 async function getProfile() {
   try {
     loading.value = true
     const { user } = session.value
 
-    const { data, error, status } = await supabase
+    let { data, error, status } = await supabase
       .from('profiles')
-      .select(`username, website, avatar_url`)
+      .select('username, website, avatar_url')
       .eq('id', user.id)
       .single()
 
@@ -53,8 +108,9 @@ async function updateProfile() {
     }
 
     const { error } = await supabase.from('profiles').upsert(updates)
-
     if (error) throw error
+
+    alert('Profile updated successfully!')
   } catch (error) {
     alert(error.message)
   } finally {
@@ -67,6 +123,7 @@ async function signOut() {
     loading.value = true
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+    router.push('/login')
   } catch (error) {
     alert(error.message)
   } finally {
@@ -75,32 +132,14 @@ async function signOut() {
 }
 </script>
 
-<template>
-  <form class="form-widget" @submit.prevent="updateProfile">
-    <div>
-      <label for="email">Email</label>
-      <input id="email" type="text" :value="session.user.email" disabled />
-    </div>
-    <div>
-      <label for="username">Name</label>
-      <input id="username" type="text" v-model="username" />
-    </div>
-    <div>
-      <label for="website">Website</label>
-      <input id="website" type="url" v-model="website" />
-    </div>
-
-    <div>
-      <input
-        type="submit"
-        class="button primary block"
-        :value="loading ? 'Loading ...' : 'Update'"
-        :disabled="loading"
-      />
-    </div>
-
-    <div>
-      <button class="button block" @click="signOut" :disabled="loading">Sign Out</button>
-    </div>
-  </form>
-</template>
+<style scoped>
+.fill-height {
+  min-height: 100vh;
+}
+.mt-4 {
+  margin-top: 16px;
+}
+.mt-2 {
+  margin-top: 8px;
+}
+</style>

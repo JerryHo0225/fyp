@@ -29,6 +29,7 @@
     "express-fileupload": "^1.4.3",
     "file-saver": "^2.0.5",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "node-fetch": "^3.3.2",
     "pdf-lib": "^1.17.1",
     "pdf-viewer-vue": "^0.2.7",

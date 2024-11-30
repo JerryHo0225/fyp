@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -40,13 +40,13 @@ ChartJS.register(
 )
 
 export default {
-  name: 'StockChart',
+  name: 'PredictStockChart',
   components: {
     Bar,
     Line
   },
   setup() {
-    const isBarChart = ref(true)
+    const isBarChart = ref(false) // Default to Line chart
     const chartData = ref({
       labels: [],
       datasets: [
@@ -55,13 +55,24 @@ export default {
           data: [],
           backgroundColor: 'rgba(54, 162, 235, 0.6)', // New color
           borderColor: 'rgba(54, 162, 235, 1)', // New color
-          borderWidth: 1
-        },{
+          borderWidth: 1,
+          pointStyle: false // Disable point style
+        },
+        {
           label: 'Predictions',
           data: [],
           backgroundColor: 'rgba(255, 99, 132, 0.6)', // New color
           borderColor: 'rgba(255, 99, 132, 1)', // New color
-          borderWidth: 1
+          borderWidth: 1,
+          pointStyle: false // Disable point style
+        },
+        {
+          label: 'New Data',
+          data: [],
+          backgroundColor: 'rgba(75, 192, 192, 0.6)', // New color
+          borderColor: 'rgba(75, 192, 192, 1)', // New color
+          borderWidth: 1,
+          pointStyle: false // Disable point style
         }
       ]
     })
@@ -91,67 +102,61 @@ export default {
         const newData = await response.json()
         console.log('API Response:', newData)
 
-        const response1 = await fetch(`/api/stocks/MSFT`)
-        const newData1 = await response1.json()
-        console.log('API Response:', newData1)
+        //console.log(newData);
+        
 
-        updateChartData(newData.data)
-        updateChartData1(newData1.data)
+        updateChartData(newData)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
-    const updateChartData = (predictions: string[]) => {
-      const combinedDates = predictions.training.Date.concat(predictions.testing.Date)
-      const combinedValues = predictions.training.actual_values.concat(predictions.testing.actual_values)
+    const updateChartData = (data: any) => {
+      if (!data) {
+        console.warn('No data available to update chart')
+        return
+      }
+
+      const trainingDates = data.training?.Date || []
+      const testingDates = data.testing?.Date || []
+
+      const trainingValues = data.training?.actual_values || []
+      const testingValues = data.testing?.actual_values || []
+
+      const newValues = data.data.stockdata
+      const newDates = data.data.stockdates
+
+      console.log("newValues" , newValues);
+      console.log("newDates" , newDates);
+
+      const newDatesFormatted = newDates.map(date => {
+        const parsedDate = new Date(date)
+        return isNaN(parsedDate.getTime()) ? 'Invalid Date' : new Intl.DateTimeFormat().format(parsedDate)
+      })
 
       console.log('Updating chart data...')
 
-      console.log('Predictions:', predictions);
-      
-
-      if (predictions.length === 0) {
-        console.warn('No predictions available to update chart')
-        return
-      }
-      
-
       const dateFormatter = new Intl.DateTimeFormat()
-      chartData.value.labels = combinedDates.map(date => {
+      const formattedTrainingDates = trainingDates.map(date => {
         const parsedDate = new Date(date)
         return isNaN(parsedDate.getTime()) ? 'Invalid Date' : dateFormatter.format(parsedDate)
       })
-      chartData.value.datasets[0].data = combinedValues
-      console.log('Updated chart data:', chartData.value)
-
-
-    }
-
-    const updateChartData1 = (predictions: string[]) => {
-      const combinedDates = predictions.training.Date.concat(predictions.testing.Date)
-      const combinedValues = predictions.training.actual_values.concat(predictions.testing.actual_values)
-
-      console.log('Updating chart data...')
-
-      console.log('Predictions:', predictions);
-      
-
-      if (predictions.length === 0) {
-        console.warn('No predictions available to update chart')
-        return
-      }
-      
-
-      const dateFormatter = new Intl.DateTimeFormat()
-      chartData.value.labels = combinedDates.map(date => {
+      const formattedTestingDates = testingDates.map(date => {
         const parsedDate = new Date(date)
         return isNaN(parsedDate.getTime()) ? 'Invalid Date' : dateFormatter.format(parsedDate)
       })
-      chartData.value.datasets[1].data = combinedValues
-      console.log('Updated chart data:', chartData.value)
 
+      const totalLength = trainingValues.length + testingValues.length + newValues.length
 
+      if (totalLength > 0) {
+        chartData.value.labels = formattedTrainingDates.concat(formattedTestingDates).concat(newDatesFormatted)
+        chartData.value.datasets[0].data = trainingValues.concat(new Array(testingValues.length + newValues.length).fill(null))
+        chartData.value.datasets[1].data = new Array(trainingValues.length).fill(null).concat(testingValues).concat(new Array(newValues.length).fill(null))
+        chartData.value.datasets[2].data = new Array(trainingValues.length + testingValues.length).fill(null).concat(newValues)
+        console.log('Updated chart data:', chartData.value)
+      } else {
+        console.warn('Invalid array length detected')
+      }
     }
 
     onMounted(() => {
@@ -169,3 +174,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.fill-height {
+  min-height: 100vh;
+}
+</style>

@@ -20,6 +20,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('../components/Auth.vue'),
+      meta: {
+        title: 'login'
+      }
+    },
+    {
       path: '/viewpridect',
       name: 'viewpridect',
       component: () => import('../views/ViewPredictChart.vue'),
@@ -156,129 +164,9 @@ const router = createRouter({
       }
     },
     {
-      path: '/approving',
-      name: 'approving-status',
-      component: () => import('../views/Endorsement_and_Approval.vue'),
-      meta: {
-        title: 'Endorsement and Approval'
-      }
-    },
-    {
-      path: '/Endorsement_and_Approval_detail/:application_id',
-      name: 'Endorsement_and_Approval_detail-status',
-      component: () => import('../views/Endorsement_and_Approval_detail.vue'),
-      meta: {
-        title: 'Endorsement and Approval Detail'
-      }
-    },
-    {
-      path: '/Permissions_assignment',
-      name: 'Permissions_assignment-status',
-      component: () => import('../views/Permissions_assignment.vue'),
-      meta: {
-        title: 'Permissions assignment'
-      }
-    },
-    {
-      path: '/admin/login',
-      name: 'admin-login',
-      component: () => import('../views/AdminLogin.vue'),
-      meta: {
-        title: 'Login'
-      }
-    },
-    {
-      path: '/admin/portal',
-      name: 'admin-portal',
-      component: () => import('../views/AdminPortal.vue'),
-      meta: {
-        title: 'Admin Portal'
-      }
-    },
-    {
-      path: '/admin/portal/total',
-      name: 'admin-portal-total',
-      component: () => import('../views/AdminPortal.vue'),
-      meta: {
-        title: 'Admin Portal'
-      }
-    },
-    {
-      path: '/admin/portal/unverified',
-      name: 'admin-portal-unverified',
-      component: () => import('../views/AdminPortal.vue'),
-      meta: {
-        title: 'Admin Portal'
-      }
-    },
-    {
-      path: '/admin/portal/approval',
-      name: 'admin-portal-approval',
-      component: () => import('../views/AdminPortal.vue'),
-      meta: {
-        title: 'Admin Portal'
-      }
-    },
-    {
-      path: '/admin/portal/reject',
-      name: 'admin-portal-reject',
-      component: () => import('../views/AdminPortal.vue'),
-      meta: {
-        title: 'Admin Portal'
-      }
-    },
-    {
-      path: '/admin/manage',
-      name: 'admin-manage',
-      component: () => import('../views/AdminManagement.vue'),
-      meta: {
-        title: 'Account Management'
-      }
-    },
-    {
-      path: '/admin/manage/active',
-      name: 'admin-manage-active',
-      component: () => import('../views/AdminManagement.vue'),
-      meta: {
-        title: 'Account Management'
-      }
-    },
-    {
-      path: '/admin/manage/disavitve',
-      name: 'admin-manage-disavitve',
-      component: () => import('../views/AdminManagement.vue'),
-      meta: {
-        title: 'Account Management'
-      }
-    },
-    {
-      path: '/admin/new',
-      name: 'admin-new',
-      component: () => import('../views/AdminInfoForm.vue'),
-      meta: {
-        title: 'Create New Admin'
-      }
-    },
-    {
-      path: '/admin/edit/:id',
-      name: 'admin-edit',
-      component: () => import('../views/AdminInfoForm.vue'),
-      meta: {
-        title: 'Admin Detail'
-      }
-    },
-    // {
-    //   path: '/PDF_viwer_',
-    //   name: 'PDF_viwer_',
-    //   component: () => import('../views/pdf_viwer.vue'),
-    //   meta: {
-    //     title: 'PDF_viwer_'
-    //   }
-    // },
-    {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/DashboardView.vue'),
+      component: () => import('@/views/Dashboard.vue'),
       meta: {
         title: 'Dashboard'
       }

@@ -61,7 +61,7 @@ onMounted(() => {
 <template>
   <nav class="navbar navbar-expand-lg navigation-clean bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" v-if="userRole != 'admin'" href="/main">System</a>
+      <a class="navbar-brand">System</a>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <a :class="active.main" href="/">Main</a>
@@ -70,7 +70,7 @@ onMounted(() => {
  
             <a :class="active.selectstock" href="/selectstock">selectstock</a>
             <a :class="active.selectrating" href="/selectrating">selectrating</a>
-            <a :class="active.forecast" href="/forecast">forecast</a>
+            <!-- <a :class="active.forecast" href="/forecast">forecast</a> -->
         </ul>
         <button type="button" class="btn btn-outline-danger" @click="logout">Sign Out</button>
       </div>

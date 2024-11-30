@@ -115,7 +115,7 @@ const submit = async function () {
         const json = await response.json();
         // log the json
         console.log(json);
-        router.push('/main');
+        //router.push('/main');
     } catch (error) {
         console.log(error);
     }

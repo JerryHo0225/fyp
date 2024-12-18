@@ -34,6 +34,13 @@ const router = createRouter({
       meta: {
         title: 'viewpridect'
       }
+    },{
+      path: '/hour/viewchart/:initialSymbol',
+      name: 'hour_viewchart',
+      component: () => import('../views/HourViewChart.vue'),
+      meta: {
+        title: 'hour_viewchart'
+      }
     },
     {
       path: '/selectstock',

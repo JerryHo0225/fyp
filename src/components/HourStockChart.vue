@@ -144,7 +144,8 @@ export default defineComponent({
           data: [],
           backgroundColor: 'rgba(75, 192, 192, 0.6)',
           borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
+          borderWidth: 1,
+          pointStyle: false
         }
       ]
     })
@@ -331,6 +332,7 @@ export default defineComponent({
         backgroundColor: dataset.color,
         borderColor: dataset.color.replace('0.6', '1'),
         borderWidth: 1,
+        pointStyle: false,
         ...(dataset.yAxisID
           ? {
               yAxisID: dataset.yAxisID,
@@ -401,7 +403,10 @@ export default defineComponent({
         if (dataCache.value[inputSymbol.value]) {
           stockData.value = dataCache.value[inputSymbol.value];
         } else {
-          const response = await fetch(`/api/stocks/${inputSymbol.value}`);
+          const response = await fetch(`/api/stocks/${inputSymbol.value}/date/20240222/hour`);
+
+          console.log(response);
+          
 
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)

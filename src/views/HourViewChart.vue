@@ -20,7 +20,7 @@
           <button @click="loadMore">Load More</button>
         </div>
         <div v-else>
-          <MoreStockChart :initialSymbol="initialSymbol"></MoreStockChart>
+          <HourStockChart :initialSymbol="initialSymbol"></HourStockChart>
         </div>
       </div>
     </main>
@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import MoreStockChart from '@/components/MoreStockChart.vue'
+import HourStockChart from '@/components/HourStockChart.vue'
 import NavBarView from '@/components/NavBarView.vue'
 import { useRoute } from 'vue-router'
 import Footer from '@/components/Footer.vue'

@@ -11,7 +11,7 @@ const expanded = ref({});
 
 const fetchProfileData = async (ticker) => {
   try {
-    const response = await fetch(`/api/stock_descriptions/${ticker}`);
+    const response = await fetch(`/api/rating/${ticker}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

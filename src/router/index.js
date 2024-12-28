@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import ChoosePrediction from '@/views/ChoosePrediction.vue'
+import PredictionResult from '@/views/PredictionResult.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +36,7 @@ const router = createRouter({
       meta: {
         title: 'viewpridect'
       }
-    },{
+    }, {
       path: '/hour/viewchart/:initialSymbol',
       name: 'hour_viewchart',
       component: () => import('../views/HourViewChart.vue'),
@@ -49,7 +51,7 @@ const router = createRouter({
       meta: {
         title: 'selectstock'
       }
-    },    
+    },
     {
       path: '/selectrating',
       name: 'selectrating',
@@ -73,7 +75,7 @@ const router = createRouter({
       meta: {
         title: 'Dashboard'
       }
-    },{
+    }, {
       path: '/viewchart',
       name: 'viewchart',
       component: () => import('@/views/ViewChart.vue'),
@@ -81,7 +83,7 @@ const router = createRouter({
         title: 'Viewchart'
       }
     }
-    ,{
+    , {
       path: '/viewchart/:initialSymbol',
       name: 'viewchart',
       component: () => import('@/views/ViewChart.vue'),
@@ -89,7 +91,7 @@ const router = createRouter({
         title: 'Viewchart'
       }
     }
-    ,{
+    , {
       path: '/search',
       name: 'search',
       component: () => import('@/views/SearchStock.vue'),
@@ -97,6 +99,16 @@ const router = createRouter({
         title: 'Search'
       }
     },
+    {
+      path: '/choose-prediction',
+      name: 'ChoosePrediction',
+      component: ChoosePrediction
+    },
+    {
+      path: '/prediction-result',
+      name: 'PredictionResult',
+      component: PredictionResult
+    }
   ]
 })
 

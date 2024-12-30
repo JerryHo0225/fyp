@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ChoosePrediction from '@/views/ChoosePrediction.vue'
 import PredictionResult from '@/views/PredictionResult.vue'
+import StockSymbols from '@/views/StockSymbols.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,8 +36,14 @@ const router = createRouter({
       component: () => import('../views/ViewPredictChart.vue'),
       meta: {
         title: 'viewpridect'
-      }
-    }, {
+      },
+      props: route => ({
+        company: route.query.company,
+        time_diff_value: route.query.time_diff_value,
+        model_type: route.query.model_type
+      })
+    }, 
+    {
       path: '/hour/viewchart/:initialSymbol',
       name: 'hour_viewchart',
       component: () => import('../views/HourViewChart.vue'),
@@ -108,6 +115,14 @@ const router = createRouter({
       path: '/prediction-result',
       name: 'PredictionResult',
       component: PredictionResult
+    },
+    {
+      path: '/stocks/symbols',
+      name: 'StockSymbols',
+      component: StockSymbols,
+      meta: {
+        title: 'Stock Symbols'
+      }
     }
   ]
 })

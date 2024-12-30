@@ -35,8 +35,8 @@ import Footer from '@/components/Footer.vue';
 
 const router = useRouter();
 const company = ref('AAPL');
-const timeDiffValue = ref('days');
-const modelType = ref('RandomForestRegressor');
+const timeDiffValue = ref('hours');
+const modelType = ref('LinearRegression');
 
 const timeDiffOptions = ['days', 'hours', 'minutes'];
 const modelTypeOptions = [
@@ -50,7 +50,7 @@ const modelTypeOptions = [
 
 const submitForm = () => {
   router.push({
-    name: 'PredictionResult',
+    name: 'viewpridect',
     query: {
       company: company.value,
       time_diff_value: timeDiffValue.value,

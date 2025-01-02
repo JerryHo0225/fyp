@@ -68,6 +68,7 @@
                 :key="chartUpdateTrigger"
                 class="mt-4 chart-container"
               />
+              <canvas ref="chartRef"></canvas>
             </v-container>
 
             <!-- Stock Information Display with v-card -->
@@ -108,6 +109,7 @@ import {
 } from 'chart.js'
 import { Bar, Line } from 'vue-chartjs'
 import { debounce } from 'lodash'
+import zoomPlugin from 'chartjs-plugin-zoom'
 
 ChartJS.register(
   CategoryScale,
@@ -117,7 +119,8 @@ ChartJS.register(
   PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  zoomPlugin
 )
 
 interface StockData {
@@ -336,7 +339,18 @@ export default defineComponent({
         title: {
           display: true,
           text: 'Stock Prices Over Time'
-        }
+        },
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true,
+            },
+            mode: 'xy',
+          },
+        },
       },
       scales: {
         y: {

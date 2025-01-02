@@ -1,81 +1,86 @@
 <script setup>
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from '../supabase'
 
-async function outh2Login() {
-    location.assign('/api/auth')
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const loading = ref(false)
+const errorMessage = ref('')
+
+const handleLogin = async () => {
+  try {
+    loading.value = true
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    })
+    if (error) throw error
+    router.push('/dashboard')
+  } catch (error) {
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    }
+  } finally {
+    loading.value = false
+  }
 }
-
-async function adminLogin() {
-    router.push('/admin/login');
-}
-
 </script>
 
 <template>
-    <main>
-        <section class="vh-100 gradient-custom">
-            <div class="container py-5 h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                        <div class="card bg-light text-white" style="border-radius: 1rem;">
-                            <div class="card-body p-5 text-center">
-
-                                <div class="mb-md-5 mt-md-1 pb-5">
-
-                                    <h2 class="fw-bold mb-3 text-uppercase text-start text-dark">Login in to Leave
-                                        Application</h2>
-
-                                    <hr class="my-3 text-dark">
-
-                                    <div class="mb-3">
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-dark btn-lg px-5 text-uppercase" type="button"
-                                                @click="outh2Login()">User Login</button>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-dark btn-lg px-5 text-uppercase" type="button"
-                                                @click="adminLogin()">Admin Login</button>
-                                        </div>
-                                    </div>
-
-                                    <!-- This is for layout design only -->
-                                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                                        <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                        <a href="#!" class="text-white"><i
-                                                class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                                        <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
-                                    </div>
-                                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                                        <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                        <a href="#!" class="text-white"><i
-                                                class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                                        <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
-                                    </div>
-                                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                                        <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                        <a href="#!" class="text-white"><i
-                                                class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                                        <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
-                                    </div>
-                                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                                        <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
-                                        <a href="#!" class="text-white"><i
-                                                class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                                        <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
-                                    </div>
-                                    <!-- This is for layout design only -->
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <main>
+    <section class="vh-100 gradient-custom">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card bg-light text-white" style="border-radius: 1rem;">
+              <div class="card-body p-5 text-center">
+                <div class="mb-md-5 mt-md-1 pb-5">
+                  <h2 class="fw-bold mb-3 text-uppercase text-start text-dark">Login to Leave Application</h2>
+                  <hr class="my-3 text-dark">
+                  <div class="mb-3">
+                    <v-form @submit.prevent="handleLogin">
+                      <v-text-field
+                        v-model="email"
+                        label="Email"
+                        type="email"
+                        required
+                        outlined
+                        prepend-icon="mdi-email"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model="password"
+                        label="Password"
+                        type="password"
+                        required
+                        outlined
+                        prepend-icon="mdi-lock"
+                      ></v-text-field>
+                      <v-btn
+                        :loading="loading"
+                        color="primary"
+                        type="submit"
+                        block
+                      >
+                        Login
+                      </v-btn>
+                      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+                    </v-form>
+                  </div>
                 </div>
+              </div>
             </div>
-        </section>
-
-
-    </main>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
+
+<style scoped>
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+</style>

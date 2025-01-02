@@ -50,79 +50,91 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
+  <div class="page-wrapper">
     <NavBarView></NavBarView>
 
-    <div class="container">
-      <v-container>
-        <v-row>
-          <template v-if="isLoading">
-            <v-col cols="12">
-              <v-alert type="info">Loading data...</v-alert>
-            </v-col>
-          </template>
-          <template v-else-if="error">
-            <v-col cols="12">
-              <v-alert type="error">{{ error }}</v-alert>
-            </v-col>
-          </template>
-          <template v-else>
-            <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
-              <v-card class="mx-auto" max-width="400">
-                <v-card-title>{{ profile.symbol }}</v-card-title>
-                <v-card-subtitle>Ratings</v-card-subtitle>
-                <v-card-text>
-                  <v-simple-table>
-                    <thead>
-                      <tr>
-                        <th>Metric</th>
-                        <th>Score</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Rating</td>
-                        <td>{{ profile.rating }}</td>
-                      </tr>
-                      <tr>
-                        <td>DCF Score</td>
-                        <td>{{ profile.ratingDetailsDCFScore }}</td>
-                      </tr>
-                      <tr>
-                        <td>ROE Score</td>
-                        <td>{{ profile.ratingDetailsROEScore }}</td>
-                      </tr>
-                      <tr>
-                        <td>ROA Score</td>
-                        <td>{{ profile.ratingDetailsROAScore }}</td>
-                      </tr>
-                      <tr>
-                        <td>DE Score</td>
-                        <td>{{ profile.ratingDetailsDEScore }}</td>
-                      </tr>
-                      <tr>
-                        <td>PE Score</td>
-                        <td>{{ profile.ratingDetailsPEScore }}</td>
-                      </tr>
-                      <tr>
-                        <td>PB Score</td>
-                        <td>{{ profile.ratingDetailsPBScore }}</td>
-                      </tr>
-                    </tbody>
-                  </v-simple-table>
-                </v-card-text>
-                
-              </v-card>
-            </v-col>
-          </template>
-        </v-row>
-      </v-container>
-    </div>
-  </main>
-  <Footer></Footer>
+    <main class="content">
+      <div class="container">
+        <v-container>
+          <v-row>
+            <template v-if="isLoading">
+              <v-col cols="12">
+                <v-alert type="info">Loading data...</v-alert>
+              </v-col>
+            </template>
+            <template v-else-if="error">
+              <v-col cols="12">
+                <v-alert type="error">{{ error }}</v-alert>
+              </v-col>
+            </template>
+            <template v-else>
+              <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
+                <v-card class="mx-auto" max-width="400">
+                  <v-card-title>{{ profile.symbol }}</v-card-title>
+                  <v-card-subtitle>Ratings</v-card-subtitle>
+                  <v-card-text>
+                    <v-simple-table>
+                      <thead>
+                        <tr>
+                          <th>Metric</th>
+                          <th>Score</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Rating</td>
+                          <td>{{ profile.rating }}</td>
+                        </tr>
+                        <tr>
+                          <td>DCF Score</td>
+                          <td>{{ profile.ratingDetailsDCFScore }}</td>
+                        </tr>
+                        <tr>
+                          <td>ROE Score</td>
+                          <td>{{ profile.ratingDetailsROEScore }}</td>
+                        </tr>
+                        <tr>
+                          <td>ROA Score</td>
+                          <td>{{ profile.ratingDetailsROAScore }}</td>
+                        </tr>
+                        <tr>
+                          <td>DE Score</td>
+                          <td>{{ profile.ratingDetailsDEScore }}</td>
+                        </tr>
+                        <tr>
+                          <td>PE Score</td>
+                          <td>{{ profile.ratingDetailsPEScore }}</td>
+                        </tr>
+                        <tr>
+                          <td>PB Score</td>
+                          <td>{{ profile.ratingDetailsPBScore }}</td>
+                        </tr>
+                      </tbody>
+                    </v-simple-table>
+                  </v-card-text>
+                  
+                </v-card>
+              </v-col>
+            </template>
+          </v-row>
+        </v-container>
+      </div>
+    </main>
+    <Footer></Footer>
+  </div>
 </template>
 
 <style scoped>
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}
+
 .container {
   padding-top: 30px;
 }

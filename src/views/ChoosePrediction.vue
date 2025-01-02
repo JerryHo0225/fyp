@@ -1,31 +1,34 @@
 <template>
-  <NavBarView></NavBarView>
-  <v-container>
-    <v-form @submit.prevent="submitForm">
-      <v-text-field
-        v-model="company"
-        label="Company"
-        placeholder="Enter stock ticker symbol (e.g., AAPL)"
-        required
-      ></v-text-field>
-      <v-select
-        v-model="timeDiffValue"
-        :items="timeDiffOptions"
-        label="Time Difference Unit"
-        required
-      ></v-select>
-      <v-select
-        v-model="modelType"
-        :items="modelTypeOptions"
-        label="Model Type"
-        required
-      ></v-select>
-      <v-btn type="submit" color="primary">Predict</v-btn>
-    </v-form>
-  </v-container>
-  <Footer></Footer>
+  <div class="page-wrapper">
+    <NavBarView />
+    <main class="content">
+      <v-container>
+        <v-form @submit.prevent="submitForm">
+          <v-text-field
+            v-model="company"
+            label="Company"
+            placeholder="Enter stock ticker symbol (e.g., AAPL)"
+            required
+          ></v-text-field>
+          <v-select
+            v-model="timeDiffValue"
+            :items="timeDiffOptions"
+            label="Time Difference Unit"
+            required
+          ></v-select>
+          <v-select
+            v-model="modelType"
+            :items="modelTypeOptions"
+            label="Model Type"
+            required
+          ></v-select>
+          <v-btn type="submit" color="primary">Predict</v-btn>
+        </v-form>
+      </v-container>
+    </main>
+    <Footer />
+  </div>
 </template>
-
 
 <script lang="ts" setup>
 import { ref } from 'vue';
@@ -61,5 +64,18 @@ const submitForm = () => {
 </script>
 
 <style scoped>
-/* Add any necessary styles here */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+}
 </style>

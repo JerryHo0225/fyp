@@ -118,18 +118,6 @@ async function updateProfile() {
   }
 }
 
-async function signOut() {
-  try {
-    loading.value = true
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    router.push('/login')
-  } catch (error) {
-    alert(error.message)
-  } finally {
-    loading.value = false
-  }
-}
 </script>
 
 <style scoped>

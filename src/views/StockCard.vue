@@ -95,58 +95,81 @@ onMounted(() => {
 </script>
 
 <template>
-  <main>
+  <div class="page-wrapper">
     <NavBarView></NavBarView>
-
-    <div class="container">
-      <v-container>
-        <v-row>
-          <template v-if="isLoading">
-            <v-col cols="12">
-              <v-alert type="info">Loading data...</v-alert>
-            </v-col>
-          </template>
-          <template v-else-if="error">
-            <v-col cols="12">
-              <v-alert type="error">{{ error }}</v-alert>
-            </v-col>
-          </template>
-          <template v-else>
-            <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
-              <v-card class="mx-auto" max-width="400">
-                <v-img :src="profile.image" alt="Company Image" height="150"></v-img>
-                <v-card-title>{{ profile.companyName }} ({{ profile.symbol }})</v-card-title>
-                <v-card-subtitle>Sector: {{ profile.sector }}</v-card-subtitle>
-                
-                <v-card-subtitle>Website:
-                  <a :href="profile.website" target="_blank" rel="noopener">
-                     {{ profile.website }}</a
-                  >
-                </v-card-subtitle>
-                <v-card-actions>
-                  <!-- <v-btn @click="toggleExpand(profile.ticker)">
-                    {{ expanded[profile.ticker] ? 'Show Less' : 'Show More' }}
-                  </v-btn> -->
-                  <v-btn
-                    :color="profile.color"
-                    :href="`http://localhost:5173/viewchart/${profile.symbol}`"
-                  >
-                    View chart of {{ profile.companyName }}
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </template>
-        </v-row>
-      </v-container>
-    </div>
-  </main>
-  <Footer></Footer>
+    <main class="content">
+      <div class="container">
+        <v-container>
+          <v-row>
+            <template v-if="isLoading">
+              <v-col cols="12">
+                <v-alert type="info">Loading data...</v-alert>
+              </v-col>
+            </template>
+            <template v-else-if="error">
+              <v-col cols="12">
+                <v-alert type="error">{{ error }}</v-alert>
+              </v-col>
+            </template>
+            <template v-else>
+              <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
+                <v-card class="mx-auto" max-width="400">
+                  <v-img :src="profile.image" alt="Company Image" height="150"></v-img>
+                  <v-card-title>{{ profile.companyName }} ({{ profile.symbol }})</v-card-title>
+                  <v-card-subtitle>Sector: {{ profile.sector }}</v-card-subtitle>
+                  
+                  <v-card-subtitle>Website:
+                    <a :href="profile.website" target="_blank" rel="noopener">
+                       {{ profile.website }}</a
+                    >
+                  </v-card-subtitle>
+                  <v-card-actions>
+                    <!-- <v-btn @click="toggleExpand(profile.ticker)">
+                      {{ expanded[profile.ticker] ? 'Show Less' : 'Show More' }}
+                    </v-btn> -->
+                    <v-btn
+                      :color="profile.color"
+                      :href="`http://localhost:5173/viewchart/${profile.symbol}`"
+                    >
+                      View chart of {{ profile.companyName }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </template>
+          </v-row>
+        </v-container>
+      </div>
+    </main>
+    <Footer></Footer>
+  </div>
 </template>
 
 <style scoped>
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1 0 auto;
+  width: 100%;
+  padding-bottom: 2rem;
+}
+
 .container {
   padding-top: 30px;
+}
+
+.v-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-card-actions {
+  margin-top: auto;
 }
 
 .v-card {

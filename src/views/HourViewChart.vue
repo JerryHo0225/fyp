@@ -1,10 +1,9 @@
 <template>
   <div class="page-wrapper">
+    <NavBarView />
     <main class="content">
-      <NavBarView />
       <div class="container">
         <div style="padding-top: 3rem"></div>
-
         <div v-if="stockData.length">
           <h2>Stock Information</h2>
           <ul>
@@ -24,7 +23,7 @@
         </div>
       </div>
     </main>
-    <Footer></Footer>
+    <Footer />
   </div>
 </template>
 
@@ -49,30 +48,23 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Ensure the page-wrapper takes full height */
 .page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Allow the main content to grow and take available space */
 .content {
-  flex: 15;
+  flex: 1;
 }
 
-/* Optional: Style the footer if needed */
-footer {
-  /* Add any footer-specific styles here */
-}
-
-/* Existing styles */
 .container {
   max-width: 800px;
   margin: auto;
 }
+
 canvas {
   max-width: 100%;
-  height: 400px; /* Ensure the height is set */
+  height: 400px;
 }
 </style>

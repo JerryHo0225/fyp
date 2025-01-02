@@ -1,18 +1,20 @@
 <template>
-  <NavBarView></NavBarView>
   <div id="app">
-    <div>
-      <apexchart
-        v-if="!isLoading && !error"
-        :options="chartOptions"
-        :series="series"
-        height="350"
-      ></apexchart>
-      <div v-else-if="isLoading">Loading data...</div>
-      <div v-else-if="error">{{ error }}</div>
-    </div>
+    <NavBarView />
+    <main>
+      <div>
+        <apexchart
+          v-if="!isLoading && !error"
+          :options="chartOptions"
+          :series="series"
+          height="350"
+        ></apexchart>
+        <div v-else-if="isLoading">Loading data...</div>
+        <div v-else-if="error">{{ error }}</div>
+      </div>
+    </main>
+    <Footer />
   </div>
-  <Footer></Footer>
 </template>
 
 <script>

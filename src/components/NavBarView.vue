@@ -2,22 +2,22 @@
 import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { jwtDecode } from 'jwt-decode'
-
-// const needHandle = inject('needHandle')
+import { supabase } from '../supabase'
 
 const router = useRouter()
 const route = useRoute()
+const loading = ref(false)
 
 // The nav-link items active status handling
 const active = ref({
   main: "nav-link",
   //viewpridect: "nav-link",
-  selectstock: "nav-link",
-  selectrating: "nav-link",
+  stockSelection: "nav-link", // Updated name
+  ratingSelection: "nav-link", // Updated name
   forecast: "nav-link",
   choosePrediction: "nav-link",
   dashboard: "nav-link",
-  stocksSymbols: "nav-link" // Add this line
+  stocksSymbols: "nav-link"
 })
 
 // The nav-link items active status handling function
@@ -25,9 +25,9 @@ const pageActice = function () {
   if (route.path == '/') {
     active.value.main = 'nav-link active'
   } else if (route.path == '/selectstock') {
-    active.value.selectstock = 'nav-link active'
+    active.value.stockSelection = 'nav-link active' // Updated name
   } else if (route.path == '/selectrating') {
-    active.value.selectrating = 'nav-link active'
+    active.value.ratingSelection = 'nav-link active' // Updated name
   } else if (route.path == '/forecast') {
     active.value.forecast = 'nav-link active'
   } else if (route.path == '/choose-prediction') {
@@ -35,7 +35,7 @@ const pageActice = function () {
   } else if (route.path == '/dashboard') {
     active.value.dashboard = 'nav-link active'
   } else if (route.path == '/stocks/symbols') {
-    active.value.stocksSymbols = 'nav-link active' // Add this line
+    active.value.stocksSymbols = 'nav-link active'
   }
 }
 
@@ -44,6 +44,19 @@ const logout = function () {
   localStorage.removeItem('token')
   alert('You have been logged out')
   router.push('/')
+}
+
+async function signOut() {
+  try {
+    loading.value = true
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+    router.push('/login')
+  } catch (error) {
+    alert(error.message)
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -60,13 +73,13 @@ onMounted(() => {
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <a :class="active.main" href="/">Main</a>
           <!-- <a :class="active.viewpridect" href="/viewpridect">viewpridect</a> -->
-          <a :class="active.selectstock" href="/selectstock">selectstock</a>
-          <a :class="active.selectrating" href="/selectrating">selectrating</a>
+          <a :class="active.stockSelection" href="/selectstock">Stock Selection</a> <!-- Updated name -->
+          <a :class="active.ratingSelection" href="/selectrating">Rating Selection</a> <!-- Updated name -->
           <a :class="active.choosePrediction" href="/choose-prediction">Choose Prediction</a>
           <a :class="active.dashboard" href="/dashboard">Dashboard</a>
           <a :class="active.stocksSymbols" href="/stocks/symbols">Stock Symbols</a> <!-- Add this line -->
         </ul>
-        <button type="button" class="btn btn-outline-danger" @click="logout">Sign Out</button>
+        <button type="button" class="btn btn-outline-danger" @click="signOut">Sign Out</button>
       </div>
     </div>
   </nav>

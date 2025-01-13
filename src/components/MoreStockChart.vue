@@ -5,8 +5,20 @@
       <v-col cols="3">
         <v-card>
           <v-card-title>Stock Selector</v-card-title>
+          <v-img
+            :src="res?.image"
+            alt="Company Image"
+            height="100"
+            :style="{ backgroundColor: '#808080' }"
+          ></v-img>
           <v-card-text>
-            <v-list>
+            <p><strong>Currency:</strong> {{ res?.currency }}</p>
+            <!-- <p><strong>Beta:</strong> {{ res?.beta }}</p> -->
+            <p><strong>Volume Average:</strong> {{ formatNumber(res?.volAvg) }}</p>
+            <p><strong>Market Cap:</strong> {{ formatNumber(res?.mktCap) }}</p>
+            <p><strong>Last Dividend:</strong> {{ res?.lastDiv }}</p>
+            <p><strong>52 Week Range:</strong> {{ res?.range }}</p>
+            <v-list dense>
               <v-list-item
                 v-for="stock in filteredStocks"
                 :key="stock.symbol"
@@ -26,7 +38,30 @@
         <!-- Existing content -->
         <div>
           <!-- Add Stock Name Display -->
-          <h2 class="text-h4 mb-4" id="abc">{{ res?.companyName || inputSymbol }}</h2>
+          <h2 class="text-h4 mb-4" id="abc">
+            Company Name - {{ res?.companyName || inputSymbol }}
+          </h2>
+
+          <!-- Display Selected Time Frame -->
+          <div class="mt-4">
+            <strong>Selected Time Frame:</strong>
+            {{ selectedTimeFrameLabel }}
+
+            <!-- Time Frame Selection Buttons -->
+            <v-btn-group class="mt-4">
+              <v-btn
+                v-for="timeFrame in timeFrames"
+                :key="timeFrame"
+                :color="selectedTimeFrame === timeFrame ? 'primary' : 'default'"
+                @click="selectedTimeFrame = timeFrame"
+              >
+                {{ timeFrame }}
+              </v-btn>
+            </v-btn-group>
+          </div>
+
+          <!-- Add Reset Zoom Button
+          <v-btn class="mt-4" @click="resetZoom">Reset Zoom</v-btn> -->
 
           <!-- Dataset Selection Buttons -->
           <v-btn-group>
@@ -36,27 +71,9 @@
               :color="isDatasetActive(dataset.label) ? 'primary' : 'default'"
               @click="toggleDataset(dataset)"
             >
-              {{ dataset.label }}
+              Apply {{ dataset.label }} to the chart
             </v-btn>
           </v-btn-group>
-
-          <!-- Time Frame Selection Buttons -->
-          <v-btn-group class="mt-4">
-            <v-btn
-              v-for="timeFrame in timeFrames"
-              :key="timeFrame"
-              :color="selectedTimeFrame === timeFrame ? 'primary' : 'default'"
-              @click="selectedTimeFrame = timeFrame"
-            >
-              {{ timeFrame }}
-            </v-btn>
-          </v-btn-group>
-
-          <!-- Display Selected Time Frame -->
-          <div class="mt-2">
-            <strong>Selected Time Frame:</strong>
-            {{ selectedTimeFrameLabel }}
-          </div>
 
           <!-- Chart and Stock Information -->
           <div v-if="chartData.labels.length > 0">
@@ -71,7 +88,7 @@
               <canvas ref="chartRef"></canvas>
             </v-container>
 
-            <!-- Stock Information Display with v-card -->
+            <!-- Stock Information Display with v-card
             <v-card class="mt-4">
               <v-card-title>Stock Information</v-card-title>
               <v-card-text>
@@ -81,7 +98,7 @@
                 <p><strong>Last Dividend:</strong> {{ res?.lastDiv }}</p>
                 <p><strong>52 Week Range:</strong> {{ res?.range }}</p>
               </v-card-text>
-            </v-card>
+            </v-card> -->
           </div>
 
           <!-- Loading and Error Messages -->
@@ -147,7 +164,9 @@ interface StockDescription {
   mktCap: string
   lastDiv: number
   range: string
-  companyName: string // Add this line
+  companyName: string
+  image: string // Add this line
+  currency: string // Add this line
   // ...other fields if necessary
 }
 
@@ -184,10 +203,10 @@ export default defineComponent({
       '1D': '1 Days',
       '5D': '5 Days',
       '1M': '1 Month',
-      '6M': '6 months',
+      '6M': '6 Months',
       YTD: 'The begining of year',
-      '1Y': '1 year',
-      '5Y': '5 years',
+      '1Y': '1 Year',
+      '5Y': '5 Years',
       All: 'The start of the stock'
     }
 
@@ -198,25 +217,6 @@ export default defineComponent({
         color: 'rgba(153, 102, 255, 0.6)',
         yAxisID: 'y1',
         type: 'bar'
-      },
-      {
-        label: 'High',
-        field: 'High',
-        color: 'rgba(255, 99, 132, 0.6)',
-        type: 'line'
-      },
-      {
-        label: 'Low',
-        field: 'Low',
-        color: 'rgba(54, 162, 235, 0.6)',
-        type: 'line'
-      },
-      // Add the Open dataset
-      {
-        label: 'Open',
-        field: 'Open',
-        color: 'rgba(75, 192, 192, 0.6)',
-        type: 'line'
       }
     ])
 
@@ -226,8 +226,38 @@ export default defineComponent({
         {
           label: 'Close Price',
           data: [] as number[],
-          backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(0, 123, 255, 0.6)', // Blue
+          borderColor: 'rgba(0, 123, 255, 1)', // Blue
+          borderWidth: 1,
+          fill: false,
+          type: 'line' as const,
+          pointStyle: false
+        },
+        {
+          label: 'Open Price',
+          data: [] as number[],
+          backgroundColor: 'rgba(128, 0, 128, 0.6)', // Purple
+          borderColor: 'rgba(128, 0, 128, 1)', // Purple
+          borderWidth: 1,
+          fill: false,
+          type: 'line' as const,
+          pointStyle: false
+        },
+        {
+          label: 'Low Price',
+          data: [] as number[],
+          backgroundColor: 'rgba(23, 162, 184, 0.6)', // Teal
+          borderColor: 'rgba(23, 162, 184, 1)', // Teal
+          borderWidth: 1,
+          fill: false,
+          type: 'line' as const,
+          pointStyle: false
+        },
+        {
+          label: 'High Price',
+          data: [] as number[],
+          backgroundColor: 'rgba(108, 117, 125, 0.6)', // Gray
+          borderColor: 'rgba(108, 117, 125, 1)', // Gray
           borderWidth: 1,
           fill: false,
           type: 'line' as const,
@@ -277,20 +307,21 @@ export default defineComponent({
 
             if (tooltip.body) {
               const titleLines = tooltip.title || []
-              const bodyLines = tooltip.body.map((b) => b.lines)
-
+              const formattedTitle = selectedTimeFrame.value === 'All' 
+                ? formatChartDate(titleLines[0], true)  // Pass true for tooltip
+                : titleLines[0]
+              
               let innerHtml = '<table>'
-
               innerHtml +=
                 '<thead><tr><th colspan="2" style="text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px;">'
-              innerHtml += titleLines[0]
+              innerHtml += formattedTitle
               innerHtml += '</th></tr></thead><tbody>'
+
+              const bodyLines = tooltip.body.map((b) => b.lines)
 
               bodyLines.forEach((body, i) => {
                 const colors = tooltip.labelColors[i]
                 const dataset = chart.data.datasets[i]
-
-                //console.log('dataset', dataset);
 
                 const dataPoint = tooltip.dataPoints[i]
 
@@ -302,23 +333,25 @@ export default defineComponent({
               })
 
               if (tooltip.dataPoints && tooltip.dataPoints.length > 0) {
-                //dont change this
                 const values = tooltip.dataPoints.map((p) => p.raw)
                 const sum = values.reduce((a, b) => a + b, 0)
                 const avg = sum / values.length
                 const max = Math.max(...values)
                 const min = Math.min(...values)
 
-                innerHtml +=
-                  '<tr><td colspan="2" style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.3)">'
-                innerHtml += `<div style="font-size: 0.9em; color: rgba(255,255,255,0.8)">`
-                // innerHtml += `<div>Average: ${avg.toFixed(2)}</div>`;
-                // innerHtml += `<div>Sum: ${sum.toFixed(2)}</div>`;
-                // innerHtml += `<div>Max: ${max.toFixed(2)}</div>`;
-                // innerHtml += `<div>Min: ${min.toFixed(2)}</div>`;
-                //dont change this
-                innerHtml += `<div>        </div>`
-                innerHtml += '</div></td></tr>'
+                const dataIndex = tooltip.dataPoints[0].dataIndex
+                if (dataIndex > 0) {
+                  // const yesterday = stockData.value[dataIndex - 1];
+                  // const today = stockData.value[dataIndex];
+                  // const change = ((today.Close - yesterday.Close) / yesterday.Close) * 100;
+
+                  innerHtml +=
+                    '<tr><td colspan="2" style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.3)">'
+                  innerHtml += `<div style="font-size: 0.9em; color: rgba(255,255,255,0.8)">`
+                  // innerHtml += `<div>Percentage Change: ${change.toFixed(2)}%</div>`
+                  innerHtml += `<div>   </div>`
+                  innerHtml += '</div></td></tr>'
+                }
               }
 
               innerHtml += '</tbody></table>'
@@ -340,17 +373,24 @@ export default defineComponent({
           display: true,
           text: 'Stock Prices Over Time'
         },
-        zoom: {
-          zoom: {
-            wheel: {
-              enabled: true,
-            },
-            pinch: {
-              enabled: true,
-            },
-            mode: 'xy',
-          },
-        },
+        // zoom: {
+        //   pan: {
+        //     enabled: true,
+        //     mode: 'xy',
+        //     onPanComplete: () => {
+        //       console.log('Pan completed')
+        //     }
+        //   },
+        //   zoom: {
+        //     wheel: {
+        //       enabled: true
+        //     },
+        //     pinch: {
+        //       enabled: true
+        //     },
+        //     scaleMode: 'xy'
+        //   }
+        // }
       },
       scales: {
         y: {
@@ -395,12 +435,11 @@ export default defineComponent({
         if (dataCache.value[inputSymbol.value]) {
           stockData.value = dataCache.value[inputSymbol.value]
         } else {
-          
           //console.log(response)
 
           const response1 = await fetch(`/api/stock_descriptions/${inputSymbol.value}`)
 
-          const response = await fetch(`/api/stocks/${inputSymbol.value}`)
+          const response = await fetch(`/api/stocks/alltime/${inputSymbol.value}`)
 
           // Assign fetched data to res.value instead of shadowing
           //example of data
@@ -524,7 +563,18 @@ export default defineComponent({
           break
         case 'All':
           startDate = new Date(data[0].date)
-          break
+          // For "All" timeframe, sample one data point per month
+          const monthlyData = data.reduce((acc: StockData[], curr: StockData) => {
+            const currDate = new Date(curr.date)
+            const lastItem = acc[acc.length - 1]
+            if (!lastItem || 
+                new Date(lastItem.date).getMonth() !== currDate.getMonth() || 
+                new Date(lastItem.date).getFullYear() !== currDate.getFullYear()) {
+              acc.push(curr)
+            }
+            return acc
+          }, [])
+          return monthlyData
         default:
           startDate = new Date(data[0].date)
       }
@@ -538,8 +588,14 @@ export default defineComponent({
       })
     }
 
-    const formatChartDate = (dateStr: string) => {
+    const formatChartDate = (dateStr: string, forTooltip = false) => {
       const date = new Date(dateStr)
+      // For "All" timeframe
+      if (selectedTimeFrame.value === 'All') {
+        // Show month/year in tooltip, only year in chart labels
+        return forTooltip ? `${date.getMonth() + 1}/${date.getFullYear()}` : `${date.getFullYear()}`
+      }
+      // For other timeframes, keep the original format
       return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     }
 
@@ -559,45 +615,62 @@ export default defineComponent({
 
       const activeDatasets = chartData.value.datasets
         .map((ds) => ds.label)
-        .filter((label) => label !== 'Close Price')
+        .filter(
+          (label) =>
+            label !== 'Close Price' &&
+            label !== 'Open Price' &&
+            label !== 'Low Price' &&
+            label !== 'High Price'
+        )
 
       // Combine all price datasets into a single dataset array
-      const priceDatasets = ['Close Price', 'High', 'Low', 'Open'].map(label => {
-        const field = label === 'Close Price' ? 'Close' : label
-        const colors = {
-          'Close Price': 'rgba(75, 192, 192, 1)',
-          'High': 'rgba(255, 99, 132, 1)',
-          'Low': 'rgba(54, 162, 235, 1)',
-          'Open': 'rgba(75, 192, 192, 1)'
-        }
-        
-        return {
-          label: label,
-          data: filteredData.map((item) => item[field]),
-          backgroundColor: colors[label],
-          borderColor: colors[label],
-          borderWidth: 1,
-          fill: false,
-          type: 'line',
-          pointStyle: false,
-          tension: 0.1,
-          yAxisID: 'y'
-        }
-      }).filter(dataset => {
-        // Fix: Use dataset.label instead of undefined 'label'
-        return dataset.label === 'Close Price' || activeDatasets.includes(dataset.label)
-      })
+      const priceDatasets = ['Close Price', 'High Price', 'Low Price', 'Open Price']
+        .map((label) => {
+          const field = label === 'Close Price' ? 'Close' : label.replace(' Price', '')
+          const colors = {
+            'Close Price': 'rgba(75, 192, 192, 1)',    // Teal
+            'High Price': 'rgba(153, 102, 255, 1)',    // Purple
+            'Low Price': 'rgba(54, 162, 235, 1)',      // Blue
+            'Open Price': 'rgba(255, 159, 64, 1)'      // Orange
+          }
+
+          return {
+            label: label,
+            data: filteredData.map((item) => item[field]),
+            backgroundColor: colors[label],
+            borderColor: colors[label],
+            borderWidth: 1.5, // Slightly thicker lines for better visibility
+            fill: false,
+            type: 'line',
+            pointStyle: false,
+            tension: 0.1,
+            yAxisID: 'y'
+          }
+        })
+        .filter((dataset) => {
+          return (
+            dataset.label === 'Close Price' ||
+            dataset.label === 'Open Price' ||
+            dataset.label === 'Low Price' ||
+            dataset.label === 'High Price' ||
+            activeDatasets.includes(dataset.label)
+          )
+        })
 
       // Volume dataset
-      const volumeDataset = activeDatasets.includes('Volume') ? [{
-        label: 'Volume',
-        data: filteredData.map((item) => item.Volume),
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-        borderColor: 'rgba(153, 102, 255, 1)',
-        borderWidth: 1,
-        type: 'bar',
-        yAxisID: 'y1'
-      }] : []
+      const volumeDataset = activeDatasets.includes('Volume')
+        ? [
+            {
+              label: 'Volume',
+              data: filteredData.map((item) => item.Volume),
+              backgroundColor: 'rgba(153, 102, 255, 0.6)',
+              borderColor: 'rgba(153, 102, 255, 1)',
+              borderWidth: 1,
+              type: 'bar',
+              yAxisID: 'y1'
+            }
+          ]
+        : []
 
       chartData.value = {
         labels: filteredData.map((item) => formatChartDate(item.date)),
@@ -688,6 +761,22 @@ export default defineComponent({
       }
     }
 
+    const chartRef = ref(null)
+
+    const resetZoom = () => {
+      const chartInstance = chartRef.value?.__chartist__
+      if (chartInstance) {
+        chartInstance.resetZoom()
+      }
+    }
+
+    const formatNumber = (num: number | string) => {
+      if (typeof num === 'number') {
+        return num.toLocaleString()
+      }
+      return num
+    }
+
     return {
       isLoading,
       error,
@@ -712,7 +801,10 @@ export default defineComponent({
       searchQuery,
       filteredStocks,
       selectStock,
-      profile
+      profile,
+      resetZoom,
+      chartRef,
+      formatNumber
     }
   }
 })

@@ -7,17 +7,22 @@ import { supabase } from '../supabase'
 const router = useRouter()
 const route = useRoute()
 const loading = ref(false)
+const isLoggedIn = ref(false)
+const userRole = ref('')
+const isanalyst = ref(false)  // Add this line
+const isAdmin = ref(false) // Add this line
 
 // The nav-link items active status handling
 const active = ref({
-  main: "nav-link",
+  main: 'nav-link',
   //viewpridect: "nav-link",
-  stockSelection: "nav-link", // Updated name
-  ratingSelection: "nav-link", // Updated name
-  forecast: "nav-link",
-  choosePrediction: "nav-link",
-  dashboard: "nav-link",
-  stocksSymbols: "nav-link"
+  stockSelection: 'nav-link', // Updated name
+  ratingSelection: 'nav-link', // Updated name
+  forecast: 'nav-link',
+  choosePrediction: 'nav-link',
+  dashboard: 'nav-link',
+  stocksSymbols: 'nav-link',
+  adminUsers: 'nav-link' // Add this line
 })
 
 // The nav-link items active status handling function
@@ -36,6 +41,8 @@ const pageActice = function () {
     active.value.dashboard = 'nav-link active'
   } else if (route.path == '/stocks/symbols') {
     active.value.stocksSymbols = 'nav-link active'
+  } else if (route.path == '/admin/users') {
+    active.value.adminUsers = 'nav-link active' // Add this line
   }
 }
 
@@ -51,6 +58,7 @@ async function signOut() {
     loading.value = true
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+    isLoggedIn.value = false
     router.push('/login')
   } catch (error) {
     alert(error.message)
@@ -59,27 +67,76 @@ async function signOut() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  const { data } = await supabase.auth.getSession()
+  isLoggedIn.value = !!data.session
+
+  console.log(data);
+  
+
+  // Get user role from session if available
+  if (data.session?.user) {
+    // First check if profile exists
+    let { data: profileData, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.session.user.id)
+      .single()
+    
+    // If profile doesn't exist, create one
+    if (!profileData) {
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert([
+          { 
+            id: data.session.user.id,
+            email: data.session.user.email,
+            isanalyst: false,
+            isAdmin: false,
+            username: data.session.user.email
+          }
+        ])
+        .select()
+        .single()
+
+      if (!insertError) {
+        profileData = newProfile
+      }
+    }
+
+    // Update the role states
+    isanalyst.value = profileData?.isanalyst || false
+    isAdmin.value = profileData?.isadmin || false
+    
+  }
   pageActice()
 })
-
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg navigation-clean bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand">System</a>
+      <a class="navbar-brand"></a>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <a :class="active.main" href="/">Main</a>
+          <!-- <a :class="active.main" href="/">Main</a> -->
           <!-- <a :class="active.viewpridect" href="/viewpridect">viewpridect</a> -->
-          <a :class="active.stockSelection" href="/selectstock">Stock Selection</a> <!-- Updated name -->
-          <a :class="active.ratingSelection" href="/selectrating">Rating Selection</a> <!-- Updated name -->
-          <a :class="active.choosePrediction" href="/choose-prediction">Choose Prediction</a>
+          <a :class="active.stockSelection" href="/selectstock">Stock Selection</a>
+          <!-- Updated name -->
+          <a :class="active.ratingSelection" href="/selectrating">Rating Selection</a>
+          <!-- Updated name -->
+          <!-- Only show Choose Prediction link if user is an analyst -->
+          <a :class="active.choosePrediction" href="/choose-prediction" v-if="isanalyst">Choose Prediction</a>
           <a :class="active.dashboard" href="/dashboard">Dashboard</a>
-          <a :class="active.stocksSymbols" href="/stocks/symbols">Stock Symbols</a> <!-- Add this line -->
+          <a :class="active.stocksSymbols" href="/stocks/symbols">Stock Symbols</a>
+          <a :class="active.adminUsers" href="/admin/users" v-if="isAdmin">Manage Users</a> <!-- Add this line -->
         </ul>
-        <button type="button" class="btn btn-outline-danger" @click="signOut">Sign Out</button>
+        <button type="button" class="btn btn-outline-danger" v-if="isLoggedIn" @click="signOut">
+          Sign Out
+        </button>
+        <button type="button" class="btn btn-outline-primary" v-else @click="router.push('/login')">
+          Sign In
+        </button>
       </div>
     </div>
   </nav>

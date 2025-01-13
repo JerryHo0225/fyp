@@ -22,6 +22,8 @@
             label="Model Type"
             required
           ></v-select>
+
+          <p>add future result</p>
           <v-btn type="submit" color="primary">Predict</v-btn>
         </v-form>
       </v-container>
@@ -31,25 +33,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import NavBarView from '@/components/NavBarView.vue';
-import Footer from '@/components/Footer.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import NavBarView from '@/components/NavBarView.vue'
+import Footer from '@/components/Footer.vue'
 
-const router = useRouter();
-const company = ref('AAPL');
-const timeDiffValue = ref('hours');
-const modelType = ref('LinearRegression');
+const router = useRouter()
+const company = ref('AAPL')
+const timeDiffValue = ref('hours')
+const modelType = ref('LinearRegression')
 
-const timeDiffOptions = ['days', 'hours', 'minutes'];
-const modelTypeOptions = [
-  'RandomForestRegressor',
-  'ExtraTreesRegressor',
-  'XGBRegressor',
-  'LinearRegression',
-  'KNeighborsRegressor',
-  'LSTM'
-];
+const timeDiffOptions = ['days', 'hours']
+//const timeDiffOptions = ['days', 'hours', 'minutes'];
+const modelTypeOptions = ['RandomForestRegressor', 'LSTM', 'LinearRegression']
+
+// const modelTypeOptions = [
+//   'RandomForestRegressor',
+//   'ExtraTreesRegressor',
+//   'XGBRegressor',
+//   'LinearRegression',
+//   'KNeighborsRegressor',
+//   'LSTM'
+// ];
 
 const submitForm = () => {
   router.push({
@@ -59,8 +64,8 @@ const submitForm = () => {
       time_diff_value: timeDiffValue.value,
       model_type: modelType.value
     }
-  });
-};
+  })
+}
 </script>
 
 <style scoped>

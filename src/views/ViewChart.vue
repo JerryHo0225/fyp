@@ -23,6 +23,7 @@
         </div>
       </div>
     </main>
+    <p>add how is the user profit</p>
     <Footer />
   </div>
 </template>

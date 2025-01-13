@@ -4,7 +4,7 @@ import NavBarView from '../components/NavBarView.vue';
 import Footer from '@/components/Footer.vue'
 
 const stockProfiles = ref([]);
-const tickers = ['MMM', 'AAPL', 'MSFT', 'ABT', 'AMZN', 'EBAY'];
+const tickers = ['MMM', 'AAPL', 'MSFT', 'NVDA', 'AMZN', 'EBAY'];
 const isLoading = ref(true);
 const error = ref(null);
 const expanded = ref({});
@@ -71,7 +71,7 @@ onMounted(() => {
               <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
                 <v-card class="mx-auto" max-width="400">
                   <v-card-title>{{ profile.symbol }}</v-card-title>
-                  <v-card-subtitle>Ratings</v-card-subtitle>
+                  <v-card-subtitle>Ratings: High score rating score is 5</v-card-subtitle>
                   <v-card-text>
                     <v-simple-table>
                       <thead>
@@ -83,30 +83,30 @@ onMounted(() => {
                       <tbody>
                         <tr>
                           <td>Rating</td>
-                          <td>{{ profile.rating }}</td>
+                          <td>{{ profile.rating }}  </td>
                         </tr>
                         <tr>
-                          <td>DCF Score</td>
+                          <td>DCF Score </td>
                           <td>{{ profile.ratingDetailsDCFScore }}</td>
                         </tr>
                         <tr>
-                          <td>ROE Score</td>
+                          <td>ROE Score </td>
                           <td>{{ profile.ratingDetailsROEScore }}</td>
                         </tr>
                         <tr>
-                          <td>ROA Score</td>
+                          <td>ROA Score </td>
                           <td>{{ profile.ratingDetailsROAScore }}</td>
                         </tr>
                         <tr>
-                          <td>DE Score</td>
+                          <td>DE Score </td>
                           <td>{{ profile.ratingDetailsDEScore }}</td>
                         </tr>
                         <tr>
-                          <td>PE Score</td>
+                          <td>PE Score </td>
                           <td>{{ profile.ratingDetailsPEScore }}</td>
                         </tr>
                         <tr>
-                          <td>PB Score</td>
+                          <td>PB Score </td>
                           <td>{{ profile.ratingDetailsPBScore }}</td>
                         </tr>
                       </tbody>
@@ -120,6 +120,7 @@ onMounted(() => {
         </v-container>
       </div>
     </main>
+    <p>Add Reference</p>
     <Footer></Footer>
   </div>
 </template>

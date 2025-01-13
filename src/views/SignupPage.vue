@@ -8,37 +8,14 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
-const isSignup = ref(false)
 const showCredentials = ref(false)
 
-// Add check for existing session on mount
 onMounted(async () => {
   const { data } = await supabase.auth.getSession()
   if (data.session) {
     router.push('/dashboard')
   }
 })
-
-const handleLogin = async () => {
-  try {
-    loading.value = true
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    })
-    
-    if (error) throw error
-    console.log('Login successful:', data)
-    router.push('/dashboard')
-  } catch (error) {
-    console.error('Login error:', error)
-    if (error instanceof Error) {
-      errorMessage.value = error.message
-    }
-  } finally {
-    loading.value = false
-  }
-}
 
 const handleSignup = async () => {
   try {
@@ -47,10 +24,6 @@ const handleSignup = async () => {
       email: email.value,
       password: password.value,
     })
-    
-    if (error) throw error
-
-    // Create profile for new user
     if (data?.user) {
       const { error: profileError } = await supabase
         .from('profiles')
@@ -58,25 +31,20 @@ const handleSignup = async () => {
           { 
             id: data.user.id,
             email: data.user.email,
-            isanalyst: false,
-            isAdmin: false,
-            username: data.user.email
           }
         ])
-      
-      if (profileError) throw profileError
     }
-
     router.push('/dashboard')
   } catch (error) {
-    console.error('Error:', error)
-    errorMessage.value = error.message
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    }
   } finally {
     loading.value = false
   }
 }
 
-const handleGoogleLogin = async () => {
+const handleGoogleSignup = async () => {
   try {
     loading.value = true
     const { error } = await supabase.auth.signInWithOAuth({
@@ -101,24 +69,24 @@ const handleGoogleLogin = async () => {
     <div class="login-container">
       <div class="login-card">
         <div class="login-header">
-          <h2>{{ isSignup ? 'Sign Up' : 'Login' }}</h2>
+          <h2>Sign Up</h2>
         </div>
         <div class="login-body">
-          <button class="google-login-btn mb-4" @click="handleGoogleLogin">
+          <button class="google-login-btn mb-4" @click="handleGoogleSignup">
             <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" />
-            {{ isSignup ? 'Sign Up with Google' : 'Login with Google' }}
+            Sign Up with Google
           </button>
           
           <div class="divider mb-4">OR</div>
           
-          <v-form @submit.prevent="isSignup ? handleSignup() : handleLogin()">
+          <v-form @submit.prevent="handleSignup()">
             <v-btn
               color="secondary"
               block
               class="mb-4"
               @click="showCredentials = !showCredentials"
             >
-              {{ showCredentials ? 'Hide' : 'Login with email and password' }}
+              {{ showCredentials ? 'Hide' : 'Sign up with email and password' }}
             </v-btn>
             <div v-if="showCredentials">
               <v-text-field
@@ -129,7 +97,7 @@ const handleGoogleLogin = async () => {
                 outlined
                 prepend-icon="mdi-email"
                 class="custom-input"
-              ></v-text-field>
+              />
               <v-text-field
                 v-model="password"
                 label="Password"
@@ -138,20 +106,20 @@ const handleGoogleLogin = async () => {
                 outlined
                 prepend-icon="mdi-lock"
                 class="custom-input"
-              ></v-text-field>
+              />
               <v-btn
                 :loading="loading"
                 color="primary"
                 type="submit"
                 block
               >
-                {{ isSignup ? 'Sign Up' : 'Login' }}
+                Sign Up
               </v-btn>
             </div>
             <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
           </v-form>
           <div class="toggle-link-container">
-            <p>Don't have an account? <router-link to="/signup" class="toggle-link">Sign Up</router-link></p>
+            <p>Already have an account? <router-link to="/login" class="toggle-link">Login</router-link></p>
           </div>
         </div>
       </div>
@@ -230,22 +198,6 @@ const handleGoogleLogin = async () => {
   margin-top: 10px;
 }
 
-.toggle-link-container {
-  text-align: center;
-  margin-top: 16px;
-}
-
-.toggle-link {
-  color: #1976D2;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.toggle-link:hover {
-  text-decoration: underline;
-}
-
 .mb-4 {
   margin-bottom: 16px;
 }
@@ -272,5 +224,21 @@ const handleGoogleLogin = async () => {
 
 .divider::after {
   right: 0;
+}
+
+.toggle-link {
+  color: #1976D2;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+}
+
+.toggle-link-container {
+  text-align: center;
+  margin-top: 16px;
 }
 </style>

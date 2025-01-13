@@ -17,25 +17,24 @@ const router = createRouter({
     {
       path: '/',
       name: 'main-page',
-      component: () => import('../views/MainPage.vue'),
-      meta: {
-        title: 'Home'
-      }
-    },
-    {
-      path: '/login/test',
-      name: 'login',
       component: () => import('../views/LoginPage.vue'),
       meta: {
-        title: 'login'
+        title: 'Home'
       }
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/MainPage.vue'),
+      component: () => import('../views/LoginPage.vue'),
       meta: {
-        title: 'Home'
+        title: 'Login'
+      }
+    },{
+      path: '/signup',
+      name: 'signup',
+      component: () => import('../views/SignupPage.vue'),
+      meta: {
+        title: 'Login'
       }
     },
     {
@@ -131,6 +130,12 @@ const router = createRouter({
       meta: {
         title: 'Stock Symbols'
       }
+    },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('../views/AdminUserManagement.vue'),
+      meta: { title: 'admin-users' } // Optional: Add middleware to check if user is admin
     }
   ]
 })

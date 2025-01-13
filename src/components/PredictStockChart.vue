@@ -1,19 +1,32 @@
 <template>
   <div>
-    <button @click="toggleChartType">
+    <!-- <button @click="toggleChartType">
       Switch to {{ isBarChart ? 'Line' : 'Bar' }} Chart
-    </button>
-    <button @click="resetZoom">Reset Zoom</button> <!-- Add reset zoom button -->
-    <button @click="resetChart">Reset Chart</button> <!-- Add reset chart button -->
-    <component 
-      :is="currentChartComponent" 
-      v-if="chartData.labels.length > 0" 
-      :data="chartData" 
-      :options="options" 
-      ref="chartRef" 
+    </button> -->
+    <!-- <button @click="resetZoom">Reset Zoom</button> Add reset zoom button -->
+    <!-- <button @click="resetChart">Reset Chart</button> Add reset chart button -->
+    <div class="user-choices">
+      <p>
+        Company: {{ company }} | Time Difference Unit:
+        {{ timeDiffValue === 'hours' ? 'Hours' : timeDiffValue }} | Model Type: {{ modelType }}
+      </p>
+    </div>
+
+    <component
+      :is="currentChartComponent"
+      v-if="chartData.labels.length > 0"
+      :data="chartData"
+      :options="options"
+      ref="chartRef"
     />
-    <p v-else>Loading data or no data available...</p>
-    <div class="chart-space"></div> <!-- Add space after the chart -->
+    <p v-else-if="error">Failed to load data. Please try again.</p>
+    <div v-else class="loading-container">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Loading chart data...</p>
+    </div>
+
+    <div class="chart-space"></div>
+    <!-- Add space after the chart -->
     <canvas ref="chartRef"></canvas>
   </div>
 </template>
@@ -36,13 +49,13 @@ import { Bar, Line } from 'vue-chartjs'
 import zoomPlugin from 'chartjs-plugin-zoom'
 
 ChartJS.register(
-  CategoryScale, 
-  LinearScale, 
-  BarElement, 
-  LineElement, 
-  PointElement, 
-  Title, 
-  Tooltip, 
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
   Legend,
   zoomPlugin
 )
@@ -58,30 +71,30 @@ const chartData = ref({
   labels: [],
   datasets: [
     {
-      label: 'Training',
+      label: 'Training', // Blue dataset
       data: [],
-      backgroundColor: 'rgba(54, 162, 235, 0.6)', // New color
-      borderColor: 'rgba(54, 162, 235, 1)', // New color
+      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+      borderColor: 'rgba(54, 162, 235, 1)',
       borderWidth: 1,
-      pointStyle: false, // Disable point style
+      pointStyle: false,
       fill: true
     },
     {
-      label: 'Predictions',
+      label: 'Original Data', // Purple dataset
       data: [],
-      backgroundColor: 'rgba(255, 99, 132, 0.6)', // New color
-      borderColor: 'rgba(255, 99, 132, 1)', // New color
+      backgroundColor: 'rgba(128, 0, 128, 0.6)',
+      borderColor: 'rgba(128, 0, 128, 1)',
       borderWidth: 1,
-      pointStyle: false, // Disable point style
+      pointStyle: false,
       fill: true
     },
     {
-      label: 'Original Data',
+      label: 'Predictions', // Orange dataset
       data: [],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)', // New color
-      borderColor: 'rgba(75, 192, 192, 1)', // New color
+      backgroundColor: 'rgba(255, 159, 64, 0.6)',
+      borderColor: 'rgba(255, 159, 64, 1)',
       borderWidth: 1,
-      pointStyle: false, // Disable point style
+      pointStyle: false,
       fill: true
     }
   ]
@@ -142,16 +155,24 @@ const options = ref({
           innerHtml += '</th></tr></thead><tbody>'
 
           bodyLines.forEach((body, i) => {
-            const colors = tooltip.labelColors[i]
             const dataset = chart.data.datasets[i]
-
-            const dataPoint = tooltip.dataPoints[i]
-
-            innerHtml += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1)">'
-            innerHtml += `<td style="padding: 5px"><span style="display: inline-block; width: 10px; height: 10px; margin-right: 5px; background-color: ${colors.backgroundColor}; border: 2px solid ${colors.borderColor};"></span>`
-            innerHtml += `${dataset.label}</td>`
-            innerHtml += `<td style="padding: 5px; text-align: right">${dataPoint.formattedValue}</td>`
-            innerHtml += '</tr>'
+            if (dataset.label === 'Original Data') {
+              const colors = chart.data.datasets[1]
+              const dataPoint = tooltip.dataPoints[0]
+              const colors1 = chart.data.datasets[2]
+              const dataPoint1 = tooltip.dataPoints[1]
+              const dataset1 = chart.data.datasets[2]
+              innerHtml += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1)">'
+              innerHtml += `<td style="padding: 5px"><span style="display: inline-block; width: 10px; height: 10px; margin-right: 5px; background-color: ${colors.borderColor}; border: 2px solid ${colors.borderColor};"></span>`
+              innerHtml += `${dataset.label}</td>`
+              innerHtml += `<td style="padding: 5px; text-align: right">${dataPoint.formattedValue}</td>`
+              innerHtml += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1)">'
+              innerHtml += `<td style="padding: 5px"><span style="display: inline-block; width: 10px; height: 10px; margin-right: 5px; background-color: ${colors1.borderColor}; border: 2px solid ${colors1.borderColor};"></span>`
+              innerHtml += `${dataset1.label}</td>`
+              innerHtml += `<td style="padding: 5px; text-align: right">${dataPoint1.formattedValue}</td>`
+              innerHtml += '</tr>'
+              innerHtml += '</tr>'
+            }
           })
 
           if (tooltip.dataPoints && tooltip.dataPoints.length < 0) {
@@ -205,33 +226,43 @@ const options = ref({
         pinch: {
           enabled: true
         },
-        scaleMode: 'xy',
+        scaleMode: 'xy'
       }
     }
   }
 })
 
-const currentChartComponent = computed(() => isBarChart.value ? Bar : Line)
+const currentChartComponent = computed(() => (isBarChart.value ? Bar : Line))
 
 const toggleChartType = () => {
   isBarChart.value = !isBarChart.value
 }
 
+const error = ref(false)
+
 const fetchData = async () => {
   try {
     console.log('Fetching data...')
-    const response = await fetch(`/api/predict/simple?company=${company}&time_diff_value=${timeDiffValue}&model_type=${modelType}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+    const response = await fetch(
+      `/api/predict/simple?company=${company}&time_diff_value=${timeDiffValue}&model_type=${modelType}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    )
+    if (response.status === 404) {
+      error.value = true
+      return
+    }
     const newData = await response.json()
     console.log('API Response:', newData)
 
     updateChartData(newData)
   } catch (error) {
     console.error('Error fetching data:', error)
+    error.value = true
   }
 }
 
@@ -248,16 +279,25 @@ const updateChartData = (data: any) => {
   const testingValues = data.data.testing?.actual_values || []
   const testingPredictions = data.data.testing?.predictions || []
 
-  console.log("testingPredictions", testingPredictions)
-
+  console.log('testingPredictions', testingPredictions)
   console.log('Updating chart data...')
 
-  const dateFormatter = new Intl.DateTimeFormat()
-  const formattedTrainingDates = trainingDates.map(date => {
+  const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    ...(timeDiffValue === 'hours' && {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false
+    })
+  })
+
+  const formattedTrainingDates = trainingDates.map((date) => {
     const parsedDate = new Date(date)
     return isNaN(parsedDate.getTime()) ? 'No Data' : dateFormatter.format(parsedDate)
   })
-  const formattedTestingDates = testingDates.map(date => {
+  const formattedTestingDates = testingDates.map((date) => {
     const parsedDate = new Date(date)
     return isNaN(parsedDate.getTime()) ? 'No Data' : dateFormatter.format(parsedDate)
   })
@@ -268,9 +308,15 @@ const updateChartData = (data: any) => {
 
   if (totalLength > 0) {
     chartData.value.labels = formattedTrainingDates.concat(formattedTestingDates)
-    chartData.value.datasets[0].data = trainingValues.concat(new Array(testingValues.length).fill('No Data'))
-    chartData.value.datasets[1].data = new Array(trainingValues.length).fill('No Data').concat(testingValues)
-    chartData.value.datasets[2].data = new Array(trainingValues.length).fill('No Data').concat(testingPredictions)
+    chartData.value.datasets[0].data = trainingValues.concat(
+      new Array(testingValues.length).fill('No Data')
+    )
+    chartData.value.datasets[1].data = new Array(trainingValues.length)
+      .fill('No Data')
+      .concat(testingValues)
+    chartData.value.datasets[2].data = new Array(trainingValues.length)
+      .fill('No Data')
+      .concat(testingPredictions)
     console.log('Updated chart data:', chartData.value)
   } else {
     console.warn('Invalid array length detected')
@@ -319,7 +365,6 @@ onMounted(() => {
   fetchData()
   //createChart()
 })
-
 </script>
 
 <style scoped>
@@ -328,5 +373,43 @@ onMounted(() => {
 }
 .chart-space {
   height: 50px; /* Adjust the height as needed */
+}
+.user-choices {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

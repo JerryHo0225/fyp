@@ -3,9 +3,21 @@
     <v-row justify="center" align="center">
       <v-col cols="12" sm="8" md="6">
         <v-card>
-          <v-card-title>
+          <v-card-title class="text-center">
             <span class="text-h5">Account Settings</span>
-          </v-card-title>
+          </v-card-title> 
+          
+          <div class="d-flex justify-center align-center ma-2">
+            <v-icon class="mr-2">mdi-account</v-icon>
+            <v-chip 
+              color="primary"
+              label
+              outlined
+            >
+              {{ userRole }}
+            </v-chip>
+          </div>
+          
           <v-card-text>
             <v-form @submit.prevent="updateProfile">
               <v-text-field
@@ -20,13 +32,15 @@
                 prepend-icon="mdi-account"
                 :rules="[v => !!v || 'Name is required']"
               ></v-text-field>
-              <v-text-field
+              
+              <!-- <v-text-field
                 label="Website"
                 v-model="website"
                 outlined
                 prepend-icon="mdi-web"
                 :rules="[v => /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/([\w/_-]+)?)*$/.test(v) || 'Enter a valid URL']"
-              ></v-text-field>
+              ></v-text-field> -->
+              
               <v-btn
                 type="submit"
                 color="primary"
@@ -36,7 +50,7 @@
               >
                 Update
               </v-btn>
-              <v-btn
+              <!-- <v-btn
                 color="secondary"
                 @click="signOut"
                 :disabled="loading"
@@ -44,7 +58,7 @@
                 class="mt-2"
               >
                 Sign Out
-              </v-btn>
+              </v-btn> -->
             </v-form>
           </v-card-text>
         </v-card>
@@ -55,7 +69,7 @@
 
 <script setup>
 import { supabase } from '../supabase'
-import { onMounted, ref, toRefs } from 'vue'
+import { onMounted, ref, toRefs, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps(['session'])
@@ -64,8 +78,13 @@ const router = useRouter()
 
 const loading = ref(false)
 const username = ref('')
-const website = ref('')
+// const website = ref('')
 const avatar_url = ref('')
+const isanalyst = ref(false)
+
+const userRole = computed(() => {
+  return isanalyst.value ? 'Analyst' : 'Normal User'
+})
 
 onMounted(getProfile)
 
@@ -76,7 +95,7 @@ async function getProfile() {
 
     let { data, error, status } = await supabase
       .from('profiles')
-      .select('username, website, avatar_url')
+      .select('username, avatar_url, isanalyst')
       .eq('id', user.id)
       .single()
 
@@ -84,8 +103,9 @@ async function getProfile() {
 
     if (data) {
       username.value = data.username
-      website.value = data.website
+      // website.value = data.website
       avatar_url.value = data.avatar_url
+      isanalyst.value = data.isanalyst || false
     }
   } catch (error) {
     alert(error.message)
@@ -102,7 +122,7 @@ async function updateProfile() {
     const updates = {
       id: user.id,
       username: username.value,
-      website: website.value,
+      // website: website.value,
       avatar_url: avatar_url.value,
       updated_at: new Date(),
     }
@@ -122,12 +142,15 @@ async function updateProfile() {
 
 <style scoped>
 .fill-height {
-  min-height: 100vh;
+  min-height: 64vh;
 }
 .mt-4 {
   margin-top: 16px;
 }
 .mt-2 {
   margin-top: 8px;
+}
+.text-center {
+  text-align: center;
 }
 </style>

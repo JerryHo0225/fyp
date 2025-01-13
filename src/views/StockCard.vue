@@ -4,7 +4,7 @@ import NavBarView from '../components/NavBarView.vue'
 import Footer from '@/components/Footer.vue'
 
 const stockProfiles = ref([])
-const tickers = ['MMM', 'AAPL', 'MSFT', 'ABT', 'AMZN', 'EBAY']
+const tickers = ['MMM', 'AAPL', 'NVDA', 'AMD', 'AMZN', 'MSFT']
 const isLoading = ref(true)
 const error = ref(null)
 const expanded = ref({})
@@ -89,6 +89,12 @@ const toggleExpand = (ticker) => {
   expanded.value[ticker] = !expanded.value[ticker]
 }
 
+const getImgStyle = () => {
+  return {
+    backgroundColor: '#808080'
+  }
+}
+
 onMounted(() => {
   fetchAllProfiles()
 })
@@ -114,7 +120,12 @@ onMounted(() => {
             <template v-else>
               <v-col v-for="profile in stockProfiles" :key="profile.ticker" cols="12" sm="6" md="4">
                 <v-card class="mx-auto" max-width="400">
-                  <v-img :src="profile.image" alt="Company Image" height="150"></v-img>
+                  <v-img 
+                    :src="profile.image" 
+                    alt="Company Image" 
+                    height="150"
+                    :style="getImgStyle()"
+                  ></v-img>
                   <v-card-title>{{ profile.companyName }} ({{ profile.symbol }})</v-card-title>
                   <v-card-subtitle>Sector: {{ profile.sector }}</v-card-subtitle>
                   

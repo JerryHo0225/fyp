@@ -110,7 +110,8 @@ onMounted(() => {
   supabase.auth.onAuthStateChange((_, _session) => {
     session.value = _session
   })
-})
+}
+)
 </script>
 
 <template>

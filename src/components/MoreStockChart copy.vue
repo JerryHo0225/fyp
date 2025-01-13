@@ -62,7 +62,7 @@
           <div v-if="chartData.labels.length > 0">
             <v-container fluid class="pa-0">
               <component
-                :is="currentChartComponent"
+                :is="currentChartComponent" 
                 :data="chartData"
                 :options="options"
                 :key="chartUpdateTrigger"
@@ -74,7 +74,7 @@
             <v-card class="mt-4">
               <v-card-title>Stock Information</v-card-title>
               <v-card-text>
-                <p><strong>Beta:</strong> {{ res?.beta }}</p>
+                <!-- <p><strong>Beta:</strong> {{ res?.beta }}</p> -->
                 <p><strong>Volume Average:</strong> {{ res?.volAvg }}</p>
                 <p><strong>Market Cap:</strong> {{ res?.mktCap }}</p>
                 <p><strong>Last Dividend:</strong> {{ res?.lastDiv }}</p>

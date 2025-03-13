@@ -35,7 +35,7 @@ export default defineComponent({
 
     const fetchPrediction = async () => {
       try {
-        const response = await fetch(`/api/predict/simple`, {
+        const response = await fetch(`/api/predict/train`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

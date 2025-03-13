@@ -3,6 +3,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { jwtDecode } from 'jwt-decode'
 import { supabase } from '../supabase'
+import RecommenderHome from '@/views/recommender/RecommenderHome.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -22,6 +23,7 @@ const active = ref({
   choosePrediction: 'nav-link',
   dashboard: 'nav-link',
   stocksSymbols: 'nav-link',
+  RecommenderHome: 'nav-link',
   adminUsers: 'nav-link' // Add this line
 })
 
@@ -43,7 +45,9 @@ const pageActice = function () {
     active.value.stocksSymbols = 'nav-link active'
   } else if (route.path == '/admin/users') {
     active.value.adminUsers = 'nav-link active' // Add this line
-  }
+  } else if (route.path == '/recommender') {
+    active.value.RecommenderHome = 'nav-link active'
+}
 }
 
 // System Logout Function
@@ -129,6 +133,7 @@ onMounted(async () => {
           <a :class="active.choosePrediction" href="/choose-prediction" v-if="isanalyst">Choose Prediction</a>
           <a :class="active.dashboard" href="/dashboard">Dashboard</a>
           <a :class="active.stocksSymbols" href="/stocks/symbols">Stock Symbols</a>
+          <a :class="active.RecommenderHome" href="/recommender">Recommender system</a>
           <a :class="active.adminUsers" href="/admin/users" v-if="isAdmin">Manage Users</a> <!-- Add this line -->
         </ul>
         <button type="button" class="btn btn-outline-danger" v-if="isLoggedIn" @click="signOut">
@@ -141,3 +146,10 @@ onMounted(async () => {
     </div>
   </nav>
 </template>
+
+<style>
+.nav-link.active {
+  text-decoration: underline;
+  font-weight: bold; /* Optional: makes the text bold for better visibility */
+}
+</style>

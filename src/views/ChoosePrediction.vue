@@ -23,6 +23,13 @@
             required
           ></v-select>
 
+          <v-select
+            v-model="year"
+            :items="yearOptions"
+            label="Year Range"
+            required
+          ></v-select>
+
           <p>add future result</p>
           <v-btn type="submit" color="primary">Predict</v-btn>
         </v-form>
@@ -42,10 +49,13 @@ const router = useRouter()
 const company = ref('AAPL')
 const timeDiffValue = ref('hours')
 const modelType = ref('LinearRegression')
+const year = ref(5)
 
 const timeDiffOptions = ['days', 'hours']
 //const timeDiffOptions = ['days', 'hours', 'minutes'];
 const modelTypeOptions = ['RandomForestRegressor', 'LSTM', 'LinearRegression']
+
+const yearOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 // const modelTypeOptions = [
 //   'RandomForestRegressor',
@@ -62,7 +72,8 @@ const submitForm = () => {
     query: {
       company: company.value,
       time_diff_value: timeDiffValue.value,
-      model_type: modelType.value
+      model_type: modelType.value,
+      year_value: year.value
     }
   })
 }

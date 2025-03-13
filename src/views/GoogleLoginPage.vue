@@ -15,7 +15,8 @@ const handleGoogleLogin = async () => {
       provider: 'google',
     })
     if (error) throw error
-    router.push('/dashboard')
+    //ture to dashboard
+    router.push('/selectstock')
   } catch (error) {
     if (error instanceof Error) {
       errorMessage.value = error.message

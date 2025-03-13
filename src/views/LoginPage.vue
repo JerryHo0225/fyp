@@ -15,7 +15,7 @@ const showCredentials = ref(false)
 onMounted(async () => {
   const { data } = await supabase.auth.getSession()
   if (data.session) {
-    router.push('/dashboard')
+    router.push('/selectstocks')
   }
 })
 
@@ -82,7 +82,7 @@ const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        redirectTo: `${window.location.origin}/selectstock`
       }
     })
     if (error) throw error

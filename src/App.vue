@@ -4,6 +4,13 @@
 
 <template>
   <RouterView />
+  <v-app-bar app color="primary" dark>
+    <!-- Add this somewhere in your app bar navigation -->
+    <v-btn text to="/recommender">
+      <v-icon left>mdi-chart-areaspline</v-icon>
+      Recommender
+    </v-btn>
+  </v-app-bar>
 </template>
 
 <style scoped>

@@ -60,6 +60,28 @@
             </v-btn-group>
           </div>
 
+          <!-- Add MA controls before the chart -->
+          <v-row align="center" class="ma-controls mb-4">
+            <v-col cols="auto">
+              <v-text-field
+                v-model="maPeriod"
+                label="MA Period"
+                type="number"
+                :rules="[v => v > 0 || 'Period must be positive']"
+                style="width: 100px"
+                @change="updateMA"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn
+                :color="showMA ? 'primary' : ''"
+                @click="toggleMA"
+              >
+                {{ showMA ? 'Hide MA' : 'Show MA' }}
+              </v-btn>
+            </v-col>
+          </v-row>
+
           <!-- Add Reset Zoom Button
           <v-btn class="mt-4" @click="resetZoom">Reset Zoom</v-btn> -->
 
@@ -676,6 +698,10 @@ export default defineComponent({
         labels: filteredData.map((item) => formatChartDate(item.date)),
         datasets: [...priceDatasets, ...volumeDataset]
       }
+
+      if (showMA.value) {
+        updateMA()
+      }
     }
 
     const isDatasetActive = (label: string) => {
@@ -777,6 +803,74 @@ export default defineComponent({
       return num
     }
 
+    // Add new refs for MA
+    const maPeriod = ref(20)
+    const showMA = ref(false)
+
+    // Add MA calculation function
+    const calculateMA = (data: number[], period: number) => {
+      const result = Array(data.length).fill(null)
+      let sum = 0
+      
+      // Calculate first MA value
+      for (let i = 0; i < period && i < data.length; i++) {
+        sum += data[i]
+        if (i === period - 1) {
+          result[0] = sum / period
+        }
+      }
+    
+      // Calculate remaining MA values using sliding window
+      for (let i = 1; i < data.length - period + 1; i++) {
+        sum = sum - data[i - 1] + data[i + period - 1]
+        result[i] = sum / period
+      }
+    
+      return result
+    }
+
+    // Add MA toggle function
+    const toggleMA = () => {
+      showMA.value = !showMA.value
+      updateMA()
+    }
+
+    // Add MA update function
+    const updateMA = () => {
+      const maDatasetIndex = chartData.value.datasets.findIndex(ds => ds.label === `MA(${maPeriod.value})`)
+      
+      if (!showMA.value) {
+        if (maDatasetIndex !== -1) {
+          chartData.value.datasets.splice(maDatasetIndex, 1)
+        }
+        return
+      }
+
+      const filteredData = filterDataByTimeFrame(stockData.value)
+      const closeValues = filteredData.map(item => item.Close)
+      const maValues = calculateMA(closeValues, Number(maPeriod.value))
+
+      const maDataset = {
+        label: `MA(${maPeriod.value})`,
+        data: maValues,
+        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 2,
+        fill: false,
+        type: 'line' as const,
+        pointStyle: false,
+        yAxisID: 'y'
+      }
+
+      if (maDatasetIndex !== -1) {
+        chartData.value.datasets[maDatasetIndex] = maDataset
+      } else {
+        chartData.value.datasets.push(maDataset)
+      }
+      
+      chartUpdateTrigger.value++
+    }
+
     return {
       isLoading,
       error,
@@ -804,7 +898,11 @@ export default defineComponent({
       profile,
       resetZoom,
       chartRef,
-      formatNumber
+      formatNumber,
+      maPeriod,
+      showMA,
+      toggleMA,
+      updateMA
     }
   }
 })
@@ -852,5 +950,11 @@ export default defineComponent({
 .v-list {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
+}
+
+.ma-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 </style>

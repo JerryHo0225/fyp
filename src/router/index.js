@@ -14,6 +14,8 @@ import StockClusters from '@/views/recommender/StockClusters.vue'
 import RecommenderUsers from '@/views/recommender/RecommenderUsers.vue'
 import RecommenderStocks from '@/views/recommender/RecommenderStocks.vue'
 import RecommenderHome from '@/views/recommender/RecommenderHome.vue'
+import middleware from '@/views/middleware.vue'
+import RegisterView from '../views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -207,6 +209,19 @@ const router = createRouter({
       name: 'RecommenderStocks',
       component: RecommenderStocks,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView,
+      meta: {
+        requiresAuth: true // Assuming users need to be authenticated to access this page
+      }
+    },
+    {
+      path: '/middleware',
+      name: 'middleware',
+      component: middleware,
     }
   ]
 })

@@ -37,7 +37,7 @@
     </v-card>
 
     <div v-if="comparison">
-      <v-row>
+      <!-- <v-row>
         <v-col cols="12">
           <v-alert
             type="info"
@@ -55,7 +55,7 @@
             </div>
           </v-alert>
         </v-col>
-      </v-row>
+      </v-row> -->
 
       <v-row>
         <!-- SVD Recommendations -->
@@ -183,8 +183,9 @@ export default {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axios.get(`/api/recommender/recommendations/compare/${this.userId}`, {
-          params: { n: this.count }
+        const response = await axios.get(`/api/recommender/recommendations/compare/`, {
+          params: { n: this.count, user_id :this.userId }
+          
         });
         
         if (response.data.status === 'success') {

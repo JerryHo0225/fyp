@@ -76,6 +76,7 @@
         :items="recommendations"
         :items-per-page="10"
         class="elevation-1"
+        :loading="forecastsLoading"
       >
         <template v-slot:item.predicted_rating="{ item }">
           <template v-if="isValidRating(item?.raw?.predicted_rating || item?.predicted_rating)">
@@ -87,9 +88,15 @@
                 size="small"
                 color="amber"
                 half-increments
-              ></v-rating>
-              <!-- Forecast chart displayed beside the rating -->
-              <ForecastMiniChart :data="forecastData" v-if="forecastData" style="margin-left: 10px;" />
+              ></v-rating> <div>-</div>
+              <!-- Pass stock-specific forecast data with loading indicator -->
+              <div v-if="forecastsLoading" class="loading-indicator">
+                <v-progress-circular size="20" width="2" indeterminate color="primary"></v-progress-circular>
+              </div>
+              <ForecastMiniChart 
+                :data="stockForecasts[(item?.raw?.symbol || item?.symbol)]" 
+                v-else-if="stockForecasts[(item?.raw?.symbol || item?.symbol)]" 
+              />
             </div>
             <span class="ml-2">
               {{ parseFloat(item?.raw?.predicted_rating || item?.predicted_rating).toFixed(1) }}
@@ -133,6 +140,7 @@ export default {
   data() {
     return {
       loading: false,
+      forecastsLoading: false, // Added separate loading state for forecasts
       userId: 1,
       model: 'svd',
       count: 5,
@@ -142,6 +150,9 @@ export default {
       recommendations_model: '',
       error: null,
       forecastData: null, // Added state to hold forecast data
+      stockForecasts: {}, // Added to store forecasts for each stock symbol
+      itemsPerPage: 10, // Default value matching v-data-table
+      currentPage: 1,   // Track current page for batched loading
       headers: [
         { text: 'Symbol', value: 'symbol' },
         { text: 'Name', value: 'name' },
@@ -179,6 +190,8 @@ export default {
     async getRecommendations() {
       this.loading = true;
       this.error = null;
+      this.stockForecasts = {}; // Clear previous forecasts
+      
       try {
         const params = {
           user_id: this.userId,
@@ -195,30 +208,86 @@ export default {
         }
         
         const response = await axios.get('/api/recommendations', { params });
-        const response1 = await axios.post('/api/predict/week', { params });
-
-        // Assign forecast data from response1
-        this.forecastData = response1.data;
-
-        
-
-        console.log(response1.data);
         
         if (response.data.status === 'success') {
           // Process recommendations to handle NaN values
           this.recommendations = this.processRecommendations(response.data.recommendations);
           this.recommendations_model = response.data.model;
+          
+          // Complete loading for recommendations display
+          this.loading = false;
+          
+          // Now start loading forecasts (after recommendations are displayed)
+          this.forecastsLoading = true;
+          await this.fetchStockForecasts(this.recommendations);
+          this.forecastsLoading = false;
         } else {
           this.error = response.data.message || 'Failed to get recommendations';
           this.recommendations = [];
+          this.loading = false;
         }
       } catch (err) {
         this.error = err.response ? err.response.data.detail : err.message;
         console.error('Error getting recommendations:', err);
         this.recommendations = [];
-      } finally {
         this.loading = false;
       }
+    },
+    
+    async fetchStockForecasts(recommendations) {
+      try {
+        if (!recommendations || recommendations.length === 0) return;
+        
+        // Calculate visible items first
+        const startIndex = 0;
+        const endIndex = Math.min(this.itemsPerPage, recommendations.length);
+        
+        // First batch: Load only visible items (first page)
+        await this.fetchBatchForecasts(recommendations, startIndex, endIndex);
+        
+        // Update UI after first batch
+        this.$forceUpdate();
+        
+        // Then load the rest in the background
+        if (endIndex < recommendations.length) {
+          // Continue loading remaining items without blocking UI
+          this.fetchBatchForecasts(recommendations, endIndex, recommendations.length);
+        }
+        
+      } catch (err) {
+        console.error('Error fetching stock forecasts:', err);
+      }
+    },
+    
+    async fetchBatchForecasts(recommendations, startIndex, endIndex) {
+      // Process a batch of recommendations
+      for (let i = startIndex; i < endIndex; i++) {
+        const stock = recommendations[i];
+        const symbol = stock.symbol || stock.stock_symbol;
+        
+        if (!symbol) continue;
+        
+        try {
+          const response = await axios.post(`/api/predict/week?company=${symbol}`);
+          if (response.data) {
+            this.stockForecasts[symbol] = response.data;
+            
+            // If this is visible batch, update UI more frequently
+            if (i < this.itemsPerPage) {
+              // Force component update every few items to show progress
+              if (i % 3 === 0) this.$forceUpdate();
+            }
+            
+            // Small delay to prevent API rate limiting
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        } catch (err) {
+          console.error(`Error fetching forecast for ${symbol}:`, err);
+        }
+      }
+      
+      console.log(`Batch forecasts loaded (${startIndex}-${endIndex}):`, 
+                  Object.keys(this.stockForecasts).length);
     },
     
     processRecommendations(recommendations) {
@@ -245,3 +314,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.loading-indicator {
+  width: 20px;
+  margin-left: 10px;
+}
+</style>

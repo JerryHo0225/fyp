@@ -6,7 +6,7 @@
       <div class="tooltip-overlay">
         <div>Start Price: {{ data.summary.start_price }}</div>
         <div>End Price: {{ data.summary.end_price }}</div>
-        <div>Overall Change (Percent): {{ data.summary.overall_change_percent }}%</div>
+        <div>Overall Change: {{ data.summary.overall_change_percent }}%</div>
       </div>
     </div>
   </div>
@@ -102,7 +102,7 @@ export default {
   transition: opacity 0.3s ease;
   white-space: normal; /* Allow wrapping */
   text-align: center;
-  width: 250px;
+  width: 200px;
 }
 
 .forecast-container:hover .tooltip-overlay {
